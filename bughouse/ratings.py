@@ -120,8 +120,8 @@ def compute_individual_ratings(r_winner, r_winner_p, r_loser, r_loser_partner):
     return  w1_points,  w2_points,  l1_points,  l2_points
 
 def compute_team_ratings(r_winning_team, r_losing_team):
-    w_points = points_from_probability(win_probability_from_rating(r_winning_team, r_losing_team), (settings.ELO_WIN_SELF + settings.ELO_WIN_PARTNER) / 2.0)
-    l_points = points_from_probability( win_probability_from_rating(r_losing_team, r_winning_team), (settings.ELO_LOSE_PARTNER + settings.ELO_LOSE_SELF) / 2.0)
+    w_points = points_from_probability(win_probability_from_rating(r_winning_team, r_losing_team), settings.ELO_WIN_TEAM) 
+    l_points = - w_points
 
     return  w_points,  l_points
 
