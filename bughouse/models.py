@@ -20,11 +20,22 @@ class Timestamped(models.Model):
         ordering = ('-created_at',)
 
 
+INITIAL_RATING = 1000
+
+
 class Player(Timestamped):
     name = models.CharField(max_length=255, unique=True)
     DEFAULT_ICON = DEFAULT_ICON
     ICON_CHOICES = ICON_CHOICES
     icon = models.CharField(max_length=20, blank=True, default=DEFAULT_ICON)
+
+    @property
+    def latest_rating(self):
+        rating = self.ratings.first()
+        if rating:
+            return rating.rating
+        else:
+            return INITIAL_RATING
 
     @property
     def total_games(self):
@@ -46,10 +57,27 @@ class Team(Timestamped):
     white_player = models.ForeignKey('Player', related_name='teams_as_white')
     black_player = models.ForeignKey('Player', related_name='teams_as_black')
 
-    class Meta:
+    class Meta(Timestamped.Meta):
         unique_together = (
             ('white_player', 'black_player'),
         )
+
+    @property
+    def latest_rating(self):
+        rating = self.ratings.first()
+        if rating:
+            return rating.rating
+        else:
+            return INITIAL_RATING
+
+    @property
+    def total_games(self):
+        return Game.objects.filter(
+            Q(winning_team__white_player=self) |
+            Q(winning_team__black_player=self) |
+            Q(losing_team__white_player=self) |
+            Q(losing_team__black_player=self)
+        ).distinct().count()
 
 
 WHITE = 'white'
