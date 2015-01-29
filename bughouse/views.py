@@ -24,3 +24,7 @@ class ReportGameView(generic.TemplateView):
         qs = Game.objects.filter(created_at__gte=day_ago).order_by('-created_at')[:5]
         serializer = GameSerializer(qs, many=True)
         return serializer.data
+
+
+class AddPlayerView(generic.CreateView):
+    model = Player

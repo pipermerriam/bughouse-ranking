@@ -101,10 +101,10 @@ $(function(){
         tagName: "tr",
         template: Handlebars.compile($('#game-row-template').html()),
         destroyGame: function() {
-            debugger;
+            this.model.destroy();
         },
         editGame: function() {
-            debugger;
+            this.trigger(
         },
         events: {
             "click button.delete": "destroyGame",
@@ -117,6 +117,8 @@ $(function(){
         template: Handlebars.compile($('#recent-games-template').html()),
         childView: RecentGameView,
         childViewContainer: "tbody"
+        events: {
+        }
     });
 
     app.RecentGamesView = RecentGamesView;
