@@ -35,3 +35,20 @@ def models(db):
         (object,),
         dict_,
     )
+
+@pytest.fixture()
+def elo_settings(settings):
+    settings.ELO_K = 10.0 
+    settings.ELO_WIN_TEAM = 50 / settings.ELO_K
+    settings.ELO_LOSE_TEAM = -  settings.ELO_WIN_TEAM
+    settings.ELO_WIN_SELF = 55 / settings.ELO_K
+    settings.ELO_WIN_PARTNER = 45 / settings.ELO_K
+    settings.ELO_LOSE_SELF = - settings.ELO_WIN_SELF
+    settings.ELO_LOSE_PARTNER = -settings.ELO_WIN_PARTNER
+
+    settings.ELO_PARTNER_WEIGHT =  1.0/5.0
+    settings.ELO_SELF_WEIGHT = 1 - settings.ELO_PARTNER_WEIGHT
+    settings.ELO_PROVISIONAL_GAME_LIMIT = 10
+    settings.ELO_PROVISIONAL_GAME_MODIFIER = 4
+
+    return settings

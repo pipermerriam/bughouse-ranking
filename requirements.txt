@@ -5,3 +5,4 @@ dj-database-url==0.3.0
 djangorestframework==3.0.4
 django-argonauts==1.0.1
 django-pipeline==1.4.3
+psycopg2==2.5.4

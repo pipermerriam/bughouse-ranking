@@ -83,7 +83,7 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+# Static files (CSS, JavaScript, Images) and Media
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = excavator.env_string(
@@ -99,18 +99,14 @@ STATICFILES_FINDERS = (
     'pipeline.finders.PipelineFinder',
 )
 
+MEDIA_URL = excavator.env_string(
+    'DJANGO_MEDIA_URL', default='/media/', required=False,
+)
+MEDIA_ROOT = os.path.abspath(
+    excavator.env_string('DJANGO_MEDIA_ROOT', required=True),
+)
 
 DEFAULT_FILE_STORAGE = excavator.env_string('DEFAULT_FILE_STORAGE')
-
-
-# Amazon S3 storage
-AWS_ACCESS_KEY_ID = excavator.env_string('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = excavator.env_string('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = excavator.env_string('AWS_STORAGE_BUCKET_NAME')
-AWS_BUCKET_NAME = AWS_STORAGE_BUCKET_NAME
-
-DEFAULT_S3_PATH = "media"
-STATIC_S3_PATH = "static"
 STATICFILES_STORAGE = excavator.env_string('STATICFILES_STORAGE')
 
 
@@ -148,6 +144,7 @@ PIPELINE_JS = {
             "js/report-game/views.js",
             "js/report-game/layouts.js",
             "js/report-game/app.js",
+            "js/report-game/templates/**.handlebars",
         ),
         'output_filename': 'base.js',
     },
@@ -158,3 +155,19 @@ PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.NoopCompressor'
 PIPELINE_TEMPLATE_EXT = '.handlebars'
 PIPELINE_TEMPLATE_FUNC = 'Handlebars.compile'
 PIPELINE_TEMPLATE_NAMESPACE = 'Handlebars.templates'
+
+# ELO constants
+ELO_K = 10.0
+ELO_WIN_TEAM = 50.0 / ELO_K
+ELO_LOSE_TEAM = - ELO_WIN_TEAM
+
+ELO_WIN_SELF = 55 / ELO_K
+ELO_WIN_PARTNER = 45 / ELO_K
+
+ELO_LOSE_SELF = - ELO_WIN_SELF
+ELO_LOSE_PARTNER = -ELO_WIN_PARTNER
+
+ELO_PARTNER_WEIGHT = 1.0 / 5
+ELO_SELF_WEIGHT = 1 - ELO_PARTNER_WEIGHT
+ELO_PROVISIONAL_GAME_LIMIT = 10
+ELO_PROVISIONAL_GAME_MODIFIER = 4

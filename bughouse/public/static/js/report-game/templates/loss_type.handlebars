@@ -1,0 +1,11 @@
+<div class="form-group form-group-lg">
+    <p>How did the game end?</p>
+    {{#each lossTypeOptions }}
+        <div class="radio">
+            <label>
+                <input type="radio" value="{{ value }}"{{#if isSelected }} checked{{/if}}>
+                {{ name }}
+            </label>
+        </div>
+    {{/each}}
+</div>

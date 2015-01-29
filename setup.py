@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pip.req import parse_requirements
+from pip.download import PipSession
 
 import bughouse
 
@@ -14,7 +15,7 @@ version = bughouse.__version__
 
 readme = open('README.rst').read()
 
-requirements = [str(req.req) for req in parse_requirements('requirements.txt')]
+requirements = [str(req.req) for req in parse_requirements('requirements.txt', session=PipSession())]
 
 setup(
     name='Bughouse Rankings',

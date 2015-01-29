@@ -10,7 +10,7 @@ $(function(){
             this.listenTo(this.model, "validate", this.validate);
         },
         tagName: "div",
-        template: Handlebars.compile($('#player-select-template').html()),
+        template: Handlebars.templates.player_select,
         /*
          *  Validation
          */
@@ -77,7 +77,7 @@ $(function(){
 
     LosingColorView = Backbone.Marionette.ItemView.extend({
         tagName: "div",
-        template: Handlebars.compile($('#losing-color-template').html()),
+        template: Handlebars.templates.losing_color,
         radioChanged: function(e) {
             this.model.set("losing_color", e.currentTarget.value);
         },
@@ -88,7 +88,7 @@ $(function(){
 
     LossTypeView = Backbone.Marionette.ItemView.extend({
         tagName: "div",
-        template: Handlebars.compile($('#loss-type-template').html()),
+        template: Handlebars.templates.loss_type,
         radioChanged: function(e) {
             this.model.set("loss_type", e.currentTarget.value);
         },
@@ -99,24 +99,30 @@ $(function(){
 
     RecentGameView = Backbone.Marionette.ItemView.extend({
         tagName: "tr",
-        template: Handlebars.compile($('#game-row-template').html()),
+        template: Handlebars.templates.game_row,
         destroyGame: function() {
-            debugger;
+            this.model.destroy();
         },
         editGame: function() {
-            debugger;
+            this.trigger("model:edit", this.model);
         },
         events: {
             "click button.delete": "destroyGame",
-            "click button.edit": "editGame",
+            "click button.edit": "editGame"
         }
     });
 
     RecentGamesView = Backbone.Marionette.CompositeView.extend({
+        initialize: function() {
+            this.on("childview:model:edit", this.editGame);
+        },
         el: "#recent-games",
-        template: Handlebars.compile($('#recent-games-template').html()),
+        template: Handlebars.templates.recent_games,
         childView: RecentGameView,
-        childViewContainer: "tbody"
+        childViewContainer: "tbody",
+        editGame: function(childView, game) {
+            this.trigger("model:edit", game);
+        }
     });
 
     app.RecentGamesView = RecentGamesView;

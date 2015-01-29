@@ -5,74 +5,85 @@ $(function(){
 
     var ReportGameApp = Backbone.Marionette.Application.extend({
         initialize: function(options) {
-            this.setupLayout(options);
-            this.listenTo(this.game_report_layout, "form:success", this.resetForm);
+            this.players = new Backbone.Collection(options.players || []);
+            this.recent_games = new app.Games(options.recent_games || []);
         },
-        setupLayout: function(options) {
-            this.game_report_layout = new app.GameReportFormLayout({
+        setupLayout: function(game) {
+            this.game_form_layout = new app.GameReportFormLayout({
                 application: this
             });
-            $("#report-game-form").append(this.game_report_layout.$el);
-            this.game_report_layout.render();
+            this.game_form_layout.model = game;
+            this.listenTo(game, "sync", this.addGameToCollection);
+            $("#report-game-form").append(this.game_form_layout.$el);
+            this.game_form_layout.render();
+            this.listenTo(this.game_form_layout, "form:success", this.resetForm);
         },
-        initializeRecentGamesView: function(options) {
+        initializeRecentGames: function() {
             this.games_view = new app.RecentGamesView({
                 collection: this.recent_games
             });
             this.games_view.render();
+            this.listenTo(this.games_view, "model:edit", this.editGame);
         },
-        initializeFormViews: function(options) {
-            var report = this.game_report_layout.model = new app.Game({
-                players: this.players
-            });
-            this.game_report_layout.winning_team_white.show(new app.PlayerSelectView({
+        setupPlayerSelects: function(game) {
+            /*
+             * Setup the four select a player views.
+             */
+            this.game_form_layout.winning_team_white.show(new app.PlayerSelectView({
                 playerColor: "White",
                 teamLabel: "Winning",
                 modelAttribute: "winning_team_white",
-                model: report
+                model: game
             }));
-            this.game_report_layout.winning_team_black.show(new app.PlayerSelectView({
+            this.game_form_layout.winning_team_black.show(new app.PlayerSelectView({
                 playerColor: "Black",
                 teamLabel: "Winning",
                 modelAttribute: "winning_team_black",
-                model: report
+                model: game
             }));
-            this.game_report_layout.losing_team_white.show(new app.PlayerSelectView({
+            this.game_form_layout.losing_team_white.show(new app.PlayerSelectView({
                 playerColor: "White",
                 teamLabel: "Losing",
                 modelAttribute: "losing_team_white",
-                model: report
+                model: game
             }));
-            this.game_report_layout.losing_team_black.show(new app.PlayerSelectView({
+            this.game_form_layout.losing_team_black.show(new app.PlayerSelectView({
                 playerColor: "Black",
                 teamLabel: "Losing",
                 modelAttribute: "losing_team_black",
-                model: report
+                model: game
             }));
-            this.game_report_layout.loss_type.show(new app.LossTypeView({
-                model: report
+        },
+        setupLossTypeSelect: function(game) {
+            this.game_form_layout.loss_type.show(new app.LossTypeView({
+                model: game
             }));
-            this.game_report_layout.losing_color.show(new app.LosingColorView({
-                model: report
+        },
+        setupLosingColorSelect: function(game) {
+            this.game_form_layout.losing_color.show(new app.LosingColorView({
+                model: game
             }));
+        },
+        initializeForm: function(game) {
+            this.setupLayout(game);
+            this.setupPlayerSelects(game);
+            this.setupLossTypeSelect(game);
+            this.setupLosingColorSelect(game);
         },
         addGameToCollection: function(game) {
-            debugger;
             this.recent_games.add(game);
         },
+        editGame: function(game) {
+            this.game_form_layout.destroy();
+            this.initializeForm(game);
+        },
         resetForm: function(game) {
-            var options = {
-                players: this.players
-            };
-            this.game_report_layout.destroy();
-            this.setupLayout(options);
-            this.initializeFormViews(options);
+            this.game_form_layout.destroy();
+            this.initializeForm(new app.Game());
         },
         start: function(options) {
-            this.players = new Backbone.Collection(options.players);
-            this.recent_games = new app.Games(options.recent_games);
-            this.initializeFormViews(options);
-            this.initializeRecentGamesView(options);
+            this.initializeForm(new app.Game());
+            this.initializeRecentGames();
         }
     });
 
