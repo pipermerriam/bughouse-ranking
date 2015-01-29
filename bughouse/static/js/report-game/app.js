@@ -8,10 +8,12 @@ $(function(){
             this.players = new Backbone.Collection(options.players || []);
             this.recent_games = new app.Games(options.recent_games || []);
         },
-        setupLayout: function(options) {
+        setupLayout: function(game) {
             this.game_form_layout = new app.GameReportFormLayout({
                 application: this
             });
+            this.game_form_layout.model = game;
+            this.listenTo(game, "sync", this.addGameToCollection);
             $("#report-game-form").append(this.game_form_layout.$el);
             this.game_form_layout.render();
             this.listenTo(this.game_form_layout, "form:success", this.resetForm);
