@@ -1,19 +1,7 @@
-from bughouse.ratings import rate_teams, rate_players
+from bughouse.ratings import rate_teams, rate_players, provisional_modifier
 
 def test_rate_single_game(factories, models, elo_settings):
     game = factories.GameFactory()
-    #team = factories.TeamFactory()
-    #player = factories.PlayerFactory()
-
-    #wtw = game.winning_team.white_player
-    #ltb = game.losing_team.black_player
-
-    #lc = game.losing_color
-    #loss_type = game.loss_type
-
-    #rating = models.TeamRating.objects.create(game = game, team = team, rating = 1000)
-    #rating1 = models.PlayerRating.objects.create(game = game, player = player, rating = 1100)
-
     r1, r2 = rate_teams(game)
     assert r1.rating == 1008 
     assert r2.rating == 992
@@ -26,34 +14,36 @@ def test_rate_multiple_games(factories, models):
     r2 = rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
     
     assert team_a.latest_rating == 1020
-    assert team_b.latest_rating == 984 #976 
+    assert team_b.latest_rating == 980
 
 def test_provisional_limit(factories, models):
     team_a = factories.TeamFactory()
     team_b = factories.TeamFactory()
+   
+    assert provisional_modifier(team_a) == 4
     
     rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
     rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
     rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
     rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
-    #rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
-    #rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
-    #rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
-    #rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
-    #rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
-    #rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
-    #rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
+    rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
+    rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
+   
+    assert provisional_modifier(team_a) == 4
     
-    assert team_a.latest_rating == 1044 
-    assert team_b.latest_rating == 968 
+    rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
+    rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
+    rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
+    rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
+    rate_teams(factories.GameFactory(winning_team = team_a, losing_team = team_b))
+   
+    assert team_a.total_games == 11
+    assert provisional_modifier(team_a) == 1
+    assert team_a.latest_rating == 1120 
+    assert team_b.latest_rating == 880
 
 
 def test_individual_ratings(factories, models):
-    # wtw = factories.PlayerFactory()
-    #wtb = factories.PlayerFactory()
-    #ltw = factories.PlayerFactory()
-    #ltb = factories.PlayerFactory()
- 
     game = factories.GameFactory()
     
     if game.losing_color == game.BLACK:    
