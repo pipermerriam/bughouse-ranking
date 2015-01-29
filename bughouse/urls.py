@@ -11,6 +11,8 @@ urlpatterns = patterns(
     url(r'^$', views.ReportGameView.as_view(), name='report-game'),
     url(r'^report-game/$', views.ReportGameView.as_view(), name='report-game'),
     url(r'^add-player/$', views.CreatePlayerView.as_view(), name='create-player'),
+    url(r'^team-leaderboard/$', views.TeamLeaderboard.as_view(), name='team-leaderboard'),
+    url(r'^individual-leaderboard/$', views.IndividualLeaderboard.as_view(), name='individual-leaderboard'),
 )
 
 
