@@ -2,26 +2,17 @@
 Bughouse Rankings
 =============================
 
-.. image:: https://badge.fury.io/py/bughouse-rankings.png
-    :target: https://badge.fury.io/py/bughouse-rankings
-
-.. image:: https://travis-ci.org/simpleenergy/bughouse-rankings.png?branch=master
-    :target: https://travis-ci.org/simpleenergy/bughouse-rankings
-
 Rankings for our bughouse games
 
 Quickstart
 ----------
 
-Install Bughouse Rankings::
+Install Requirements::
 
-    pip install bughouse-rankings
+    pip install -r requirements.txt
+    pip install -r requirements-dev.txt  # For development or testing
 
-Then use it in a project::
 
-    import bughouse-rankings
+Run the tests::
 
-Features
---------
-
-* TODO
+    py.test tests
