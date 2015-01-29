@@ -1,9 +1,30 @@
 from django.db import models
+from django.db.models import Q
 
 
 class Player(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
+
+    @property
+    def latest_rating(self):  
+        rating = self.ratings.first()
+        if rating: 
+            return rating.rating
+        else: 
+            return INITIAL_RATING 
+
+    @property
+    def total_games(self):
+        return Game.objects.filter(
+            Q(winning_team__white_player=self) |
+            Q(winning_team__black_player=self) |
+            Q(losing_team__white_player=self) |
+            Q(losing_team__black_player=self)
+        ).distinct().count() 
+
+
+INITIAL_RATING = 1000
 
 class Team(models.Model):
     white_player = models.ForeignKey('Player', related_name='teams_as_white')
@@ -13,6 +34,24 @@ class Team(models.Model):
         unique_together = (
             ('white_player', 'black_player'),
         )
+
+    @property
+    def latest_rating(self):  
+        rating = self.ratings.first()
+        if rating: 
+            return rating.rating
+        else: 
+            return INITIAL_RATING 
+    
+    @property
+    def total_games(self):
+        return Game.objects.filter(
+            Q(winning_team__white_player=self) |
+            Q(winning_team__black_player=self) |
+            Q(losing_team__white_player=self) |
+            Q(losing_team__black_player=self)
+        ).distinct().count() 
+
 
 
 WHITE = 'white'
@@ -59,6 +98,9 @@ class AbstractRating(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     rating = models.FloatField()
+
+    class Meta:
+        ordering = ['-created_at']
 
 
 class TeamRating(AbstractRating):
