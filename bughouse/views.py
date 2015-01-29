@@ -26,5 +26,21 @@ class ReportGameView(generic.TemplateView):
         return serializer.data
 
 
-class AddPlayerView(generic.CreateView):
+class CreatePlayerView(generic.CreateView):
     model = Player
+    template_name = 'bughouse/create-player.html'
+    success_url = '/'
+
+    def get_context_data(self, **kwargs):
+        context = super(CreatePlayerView, self).get_context_data(**kwargs)
+        context['available_icons'] = self.get_available_icons()
+        return context
+
+    def get_available_icons(self):
+        used_icons = set(Player.objects.exclude(
+            icon=Player.DEFAULT_ICON,
+        ).values_list('icon', flat=True))
+        available_icons = tuple((
+            value for value in Player.ICON_CHOICES if value[0] not in used_icons
+        ))
+        return available_icons
