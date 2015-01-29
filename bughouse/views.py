@@ -4,6 +4,7 @@ from django.views import generic
 from bughouse.models import (
     Player,
     Game,
+    Team,
 )
 from bughouse.api.v1.serializers import (
     GameSerializer,
@@ -44,3 +45,21 @@ class CreatePlayerView(generic.CreateView):
             value for value in Player.ICON_CHOICES if value[0] not in used_icons
         ))
         return available_icons
+
+class TeamLeaderboard(generic.ListView):
+    model = Team
+    context_object_name = 'teams'
+    template_name = 'bughouse/team-leaderboard.html'
+    
+    def get_queryset(self):
+        qs = super(TeamLeaderboard, self).get_queryset()
+        return sorted(qs, key = lambda team: team.latest_rating, reverse = True)
+
+class IndividualLeaderboard(generic.ListView):
+    model = Player 
+    context_object_name = 'players'
+    template_name = 'bughouse/individual-leaderboard.html'
+    
+    def get_queryset(self):
+        qs = super(IndividualLeaderboard, self).get_queryset()
+        return sorted(qs, key = lambda player: player.latest_rating, reverse = True)
