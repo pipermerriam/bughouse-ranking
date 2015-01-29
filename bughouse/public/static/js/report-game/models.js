@@ -66,6 +66,10 @@ $(function(){
             "lossTypeOptions",
             "losingColorOptions",
             "isEditable",
+            "winningWhite",
+            "winningBlack",
+            "losingWhite",
+            "losingBlack"
         ],
         isEditable: function() {
             if ( _.isNull(this.get("created_at")) ) {
@@ -77,7 +81,10 @@ $(function(){
             }
         },
         getPlayer: function(playerId) {
-            return this.get("players").get(playerId);
+            if ( _.isNull(playerId) ) {
+                return null;
+            }
+            return window.application.players.get(playerId);
         },
         selectedPlayers: function() {
             var selected_player_ids = _.reject(
@@ -92,7 +99,7 @@ $(function(){
             return _.map(selected_player_ids, _.bind(this.getPlayer, this));
         },
         unselectedPlayers: function() {
-            var players = this.get("players");
+            var players = window.application.players;
             return players.difference(this.selectedPlayers());
         },
         lossTypeOptions: function() {
@@ -110,6 +117,18 @@ $(function(){
                 {name: "White", value: "white", isSelected: (selectedColor === "white")},
                 {name: "Black", value: "black", isSelected: (selectedColor === "black")},
             ]
+        },
+        winningWhite: function() {
+            return this.getPlayer(this.get("winning_team_white"));
+        },
+        winningBlack: function() {
+            return this.getPlayer(this.get("winning_team_black"));
+        },
+        losingWhite: function() {
+            return this.getPlayer(this.get("losing_team_white"));
+        },
+        losingBlack: function() {
+            return this.getPlayer(this.get("losing_team_black"));
         }
     });
 

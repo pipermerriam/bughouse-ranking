@@ -104,20 +104,24 @@ $(function(){
             this.model.destroy();
         },
         editGame: function() {
-            this.trigger(
+            this.trigger("model:edit", this.model);
         },
         events: {
             "click button.delete": "destroyGame",
-            "click button.edit": "editGame",
+            "click button.edit": "editGame"
         }
     });
 
     RecentGamesView = Backbone.Marionette.CompositeView.extend({
+        initialize: function() {
+            this.on("childview:model:edit", this.editGame);
+        },
         el: "#recent-games",
         template: Handlebars.compile($('#recent-games-template').html()),
         childView: RecentGameView,
-        childViewContainer: "tbody"
-        events: {
+        childViewContainer: "tbody",
+        editGame: function(childView, game) {
+            this.trigger("model:edit", game);
         }
     });
 

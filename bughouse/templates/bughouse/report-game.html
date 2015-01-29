@@ -113,11 +113,11 @@
 
 <script id="game-row-template" type="text/x-handlebars-template">
 <td># {{ id }}</td>
-<td>{{ winning_team_white }}</td>
-<td>{{ winning_team_black }}</td>
-<td>{{ losing_team_white }}</td>
-<td>{{ losing_team_black }}</td>
-<td>{{ losing_team_color }}</td>
+<td>{{ winningWhite.name }}</td>
+<td>{{ winningBlack.name }}</td>
+<td>{{ losingWhite.name }}</td>
+<td>{{ losingBlack.name }}</td>
+<td>{{ losing_color }}</td>
 <td>{{ loss_type }}</td>
 <td>
     {{#if isEditable }}
@@ -139,11 +139,11 @@
 $(document).ready(function() {
     var players = {{ players|json }};
     var recent_games = {{ recent_games|json }};
-    window.application = new app.ReportGameApp();
-    window.application.start({
+    window.application = new app.ReportGameApp({
         players: players,
         recent_games: recent_games,
     });
+    window.application.start();
 });
 </script>
 {% endblock body %}
