@@ -52,3 +52,20 @@ class Game(models.Model):
     )
     loss_type = models.CharField(max_length=20, choices=LOSS_TYPE_CHOICES,
                                  blank=True, default=UNKNOWN)
+
+
+class AbstractRating(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    rating = models.FloatField()
+
+
+class TeamRating(AbstractRating):
+    game = models.ForeignKey('Game', related_name="team_ratings")
+    team = models.ForeignKey('Team', related_name="ratings")
+
+
+class PlayerRating(AbstractRating):
+    game = models.ForeignKey('Game', related_name="player_ratings")
+    player = models.ForeignKey('Player', related_name="ratings")
