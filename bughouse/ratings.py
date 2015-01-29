@@ -1,6 +1,7 @@
 from django.conf import settings
 import decimal 
 
+
 def rate_teams(game):
    wt = game.winning_team
    lt = game.losing_team
