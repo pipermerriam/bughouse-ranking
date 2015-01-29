@@ -1,18 +1,41 @@
 from django.db import models
 from django.db.models import Q
+from django.core.exceptions import ValidationError
 
 
-class Player(models.Model):
+DEFAULT_ICON = 'test-default'
+ICON_CHOICES = (
+    (DEFAULT_ICON, DEFAULT_ICON),
+    ('test-a', 'test-a'),
+    ('test-b', 'test-b'),
+)
+
+
+class Timestamped(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+        ordering = ('-created_at',)
+
+
+INITIAL_RATING = 1000
+
+
+class Player(Timestamped):
     name = models.CharField(max_length=255, unique=True)
-
+    DEFAULT_ICON = DEFAULT_ICON
+    ICON_CHOICES = ICON_CHOICES
+    icon = models.CharField(max_length=20, blank=True, default=DEFAULT_ICON)
 
     @property
-    def latest_rating(self):  
+    def latest_rating(self):
         rating = self.ratings.first()
-        if rating: 
+        if rating:
             return rating.rating
-        else: 
-            return INITIAL_RATING 
+        else:
+            return INITIAL_RATING
 
     @property
     def total_games(self):
@@ -21,28 +44,32 @@ class Player(models.Model):
             Q(winning_team__black_player=self) |
             Q(losing_team__white_player=self) |
             Q(losing_team__black_player=self)
-        ).distinct().count() 
+        ).distinct().count()
+
+    def clean_fields(self, *args, **kwargs):
+        super(Player, self).clean_fields(*args, **kwargs)
+        if self.icon != self.DEFAULT_ICON:
+            if Player.objects.exclude(id=self.pk).filter(icon=self.icon).exists():
+                raise ValidationError("Icon is taken")
 
 
-INITIAL_RATING = 1000
-
-class Team(models.Model):
+class Team(Timestamped):
     white_player = models.ForeignKey('Player', related_name='teams_as_white')
     black_player = models.ForeignKey('Player', related_name='teams_as_black')
 
-    class Meta:
+    class Meta(Timestamped.Meta):
         unique_together = (
             ('white_player', 'black_player'),
         )
 
     @property
-    def latest_rating(self):  
+    def latest_rating(self):
         rating = self.ratings.first()
-        if rating: 
+        if rating:
             return rating.rating
-        else: 
-            return INITIAL_RATING 
-    
+        else:
+            return INITIAL_RATING
+
     @property
     def total_games(self):
         return Game.objects.filter(
@@ -50,8 +77,7 @@ class Team(models.Model):
             Q(winning_team__black_player=self) |
             Q(losing_team__white_player=self) |
             Q(losing_team__black_player=self)
-        ).distinct().count() 
-
+        ).distinct().count()
 
 
 WHITE = 'white'
@@ -64,10 +90,7 @@ SWINDLE = 'swindle'
 IMMINENT_DEATH = 'imminent-death'
 
 
-class Game(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
+class Game(Timestamped):
     winning_team = models.ForeignKey('Team', related_name='game_wins')
     losing_team = models.ForeignKey('Team', related_name='game_losses')
     WHITE = WHITE
@@ -93,21 +116,15 @@ class Game(models.Model):
                                  blank=True, default=UNKNOWN)
 
 
-class AbstractRating(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
+class TeamRating(Timestamped):
     rating = models.FloatField()
 
-    class Meta:
-        ordering = ['-created_at']
-
-
-class TeamRating(AbstractRating):
     game = models.ForeignKey('Game', related_name="team_ratings")
     team = models.ForeignKey('Team', related_name="ratings")
 
 
-class PlayerRating(AbstractRating):
+class PlayerRating(Timestamped):
+    rating = models.FloatField()
+
     game = models.ForeignKey('Game', related_name="player_ratings")
     player = models.ForeignKey('Player', related_name="ratings")

@@ -43,3 +43,6 @@ docs/_build
 
 # SQLite3
 *.sqlite3
+
+# 12 Factor
+.env

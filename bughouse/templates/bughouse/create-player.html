@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <form action="." method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="{{ form.name.html_name }}">Name</label>
+                    <input class="form-control" name="{{ form.name.html_name }}" id="{{ form.name.auto_id }}" placeholder="Player Name">
+                </div>
+                <div class="form-group">
+                    {% for option, display in available_icons %}
+                        <label>
+                            <input type="radio" name="{{ form.icon.html_name }}" id="{{ form.icon.auto_id }}-{{ forloop.counter0 }}" value="{{ option }}">
+                        </label>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn btn-lg btn-success">Create</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

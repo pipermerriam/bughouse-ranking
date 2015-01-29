@@ -83,7 +83,7 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+# Static files (CSS, JavaScript, Images) and Media
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = excavator.env_string(
@@ -99,18 +99,14 @@ STATICFILES_FINDERS = (
     'pipeline.finders.PipelineFinder',
 )
 
+MEDIA_URL = excavator.env_string(
+    'DJANGO_MEDIA_URL', default='/media/', required=False,
+)
+MEDIA_ROOT = os.path.abspath(
+    excavator.env_string('DJANGO_MEDIA_ROOT', required=True),
+)
 
 DEFAULT_FILE_STORAGE = excavator.env_string('DEFAULT_FILE_STORAGE')
-
-
-# Amazon S3 storage
-AWS_ACCESS_KEY_ID = excavator.env_string('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = excavator.env_string('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = excavator.env_string('AWS_STORAGE_BUCKET_NAME')
-AWS_BUCKET_NAME = AWS_STORAGE_BUCKET_NAME
-
-DEFAULT_S3_PATH = "media"
-STATIC_S3_PATH = "static"
 STATICFILES_STORAGE = excavator.env_string('STATICFILES_STORAGE')
 
 
