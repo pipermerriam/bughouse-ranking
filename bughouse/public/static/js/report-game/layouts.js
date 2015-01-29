@@ -8,7 +8,7 @@ $(function(){
             this.application = options.application
         },
         tagName: "div",
-        template: Handlebars.compile($('#game-form-template').html()),
+        template: Handlebars.templates.game_form,
         regions: {
             winning_team_white: '#winning-white-player',
             winning_team_black: '#winning-black-player',

@@ -143,6 +143,7 @@ PIPELINE_JS = {
             "js/report-game/views.js",
             "js/report-game/layouts.js",
             "js/report-game/app.js",
+            "js/report-game/templates/**.handlebars",
         ),
         'output_filename': 'base.js',
     },
@@ -155,13 +156,13 @@ PIPELINE_TEMPLATE_FUNC = 'Handlebars.compile'
 PIPELINE_TEMPLATE_NAMESPACE = 'Handlebars.templates'
 
 # ELO constants
-ELO_K = 10.0 
+ELO_K = 10.0
 ELO_WIN_SELF = 55 / ELO_K
 ELO_WIN_PARTNER = 45 / ELO_K
 ELO_LOSE_SELF = - ELO_WIN_SELF
 ELO_LOSE_PARTNER = -ELO_WIN_PARTNER
 
-ELO_PARTNER_WEIGHT = 1.0 /5
+ELO_PARTNER_WEIGHT = 1.0 / 5
 ELO_SELF_WEIGHT = 1 - ELO_PARTNER_WEIGHT
 ELO_PROVISIONAL_GAME_LIMIT = 10
-ELO_PROVISIONAL_GAME_MODIFIER = 4 
+ELO_PROVISIONAL_GAME_MODIFIER = 4
