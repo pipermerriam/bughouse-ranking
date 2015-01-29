@@ -7,7 +7,6 @@ $(function(){
         initialize: function(options) {
             this.setupLayout(options);
             this.listenTo(this.game_report_layout, "form:success", this.resetForm);
-            this.listenTo(this.game_report_layout, "form:success", this.addGameToCollection);
         },
         setupLayout: function(options) {
             this.game_report_layout = new app.GameReportFormLayout({
@@ -58,6 +57,7 @@ $(function(){
             }));
         },
         addGameToCollection: function(game) {
+            debugger;
             this.recent_games.add(game);
         },
         resetForm: function(game) {

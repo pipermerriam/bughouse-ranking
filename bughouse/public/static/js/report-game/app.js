@@ -58,6 +58,7 @@ $(function(){
             }));
         },
         addGameToCollection: function(game) {
+            debugger;
             this.recent_games.add(game);
         },
         resetForm: function(game) {
