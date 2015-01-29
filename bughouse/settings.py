@@ -124,6 +124,7 @@ PIPELINE_CSS = {
         'source_filenames': (
             "css/bootstrap.css",
             "css/bootstrap-theme.css",
+            "css/custom.css",
         ),
         'output_filename': 'base.css',
     },
