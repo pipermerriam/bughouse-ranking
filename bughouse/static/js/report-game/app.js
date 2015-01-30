@@ -13,6 +13,7 @@ $(function(){
                 application: this
             });
             this.game_form_layout.model = game;
+            this.game_form_layout.listenTo(game, "game:submit", _.bind(this.game_form_layout.submit, this.game_form_layout));
             this.listenTo(game, "sync", this.addGameToCollection);
             $("#report-game-form").append(this.game_form_layout.$el);
             this.game_form_layout.render();
