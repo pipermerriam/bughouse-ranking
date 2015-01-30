@@ -13,9 +13,9 @@
                   <tr>
               <thead>
         {% for team in teams %}
-        <tr><td>   {{  team.white_player.name }}  </td> 
-         <td>   {{  team.black_player.name }}</td> 
-         <td>   {{ team.latest_rating }}</td> </tr> 
+        <tr><td valign = 'middle'>   {{  team.white_player.name }}  </td> 
+         <td valign = 'middle'>   {{  team.black_player.name }}</td> 
+         <td valign = 'middle'>   {{ team.latest_rating }}</td> </tr> 
         {% endfor %}
             </table>
         </div>
