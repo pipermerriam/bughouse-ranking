@@ -1,14 +1,19 @@
-<h2>Pick winning team's colors</h2>
+<div class="row">
+    <div class="col-xs-12">
+        <h2>Pick winning team's colors</h2>
+    </div>
+</div>
+<div class="row">
 <div class="player-container lose{{#if isBlackLoser }} selected{{/if}}">
     <img src="{{ winningWhite.icon_url }}" class="player img-responsive" id="{{ winningWhite.name }}"/>
     <div class="player-status">
     </div>
 </div>
-<a class="btn btn-success">Winner (White)</a>
+<a class="btn btn-success mont">Winner (White)</a>
 <a class="swap"> swap </a>
 <div class="player-container lose{{#if isWhiteLoser }} selected{{/if}}">
-    <img src="{{ winningBlack.icon_url }}" class="player img-responsive" id="{{ winningBlack.name }}"/>
+    <img src="{{ winningWhite.icon_url }}" class="player img-responsive" id="{{ winningBlack.name }}"/>
      <div class="player-status">
     </div>
 </div>
-<a class="btn btn-danger">Winner (Black)</a>
+<a class="btn btn-danger mont">Winner (Black)</a>
