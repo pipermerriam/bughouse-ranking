@@ -157,7 +157,7 @@ PIPELINE_TEMPLATE_FUNC = 'Handlebars.compile'
 PIPELINE_TEMPLATE_NAMESPACE = 'Handlebars.templates'
 
 # ELO constants
-ELO_K = 4.0 
+ELO_K = 4.0
 ELO_WIN_TEAM = 50.0 / ELO_K
 ELO_LOSE_TEAM = - ELO_WIN_TEAM
 
