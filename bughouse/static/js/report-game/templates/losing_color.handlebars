@@ -12,7 +12,7 @@
             </div>
         </div>
         <div class="loser-button">
-            <a class="btn btn-success white mont">Loser</a>
+            <a class="btn btn-success white mont{{#if isWhiteLoser }} selected{{/if}}">Loser</a>
             <br/>
             <small>White</small>
         </div>
@@ -28,7 +28,7 @@
             </div>
         </div>
         <div class="loser-button">
-            <a class="btn btn-danger black mont">Loser</a>
+            <a class="btn btn-danger black mont{{#if isBlackLoser }} selected{{/if}}">Loser</a>
             <br/>
             <small>Black</small>
         </div>
