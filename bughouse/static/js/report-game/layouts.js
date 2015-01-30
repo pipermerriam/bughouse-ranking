@@ -23,9 +23,6 @@ $(function(){
                 return;
             }
         },
-        events: {
-            "click button[type=\"button\"]": "submit"
-        }
     });
 
     app.GameReportFormLayout = GameReportFormLayout;

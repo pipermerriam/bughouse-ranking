@@ -174,16 +174,20 @@ $(function(){
         tagName: "div",
         template: Handlebars.templates.loss_type,
         setCheckmate: function() {
-            this.model.set("loss_type", "checkmate");
+            this.setValue("checkmate");
         },
         setTime: function() {
-            this.model.set("loss_type", "time");
+            this.setValue("time");
         },
         setSwindle: function() {
-            this.model.set("loss_type", "swindle");
+            this.setValue("swindle");
         },
         setImminentDeath: function() {
-            this.model.set("loss_type", "imminent-death");
+            this.setValue("imminent-death");
+        },
+        setValue: function(value) {
+            this.model.set("loss_type", value);
+            this.model.trigger("game:submit");
         },
         templateHelpers: function() {
             return {
