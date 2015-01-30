@@ -115,6 +115,11 @@ a:visited {
 
 .mont {font-family: "Montserrat", helvetica, sans-serif; text-transform: uppercase;}
 
+.leaderboard-icon {
+   max-width: 50%;
+   border-radius: 50%;
+}
 @media (max-width: 667px) {
     #losing-team-color .player-container, #winning-team-color .player-container {width: 100%;}
 }
+
