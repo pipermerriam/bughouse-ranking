@@ -169,7 +169,7 @@ $(function(){
 
     LossTypeView = Backbone.Marionette.ItemView.extend({
         initialize: function(options) {
-            this.listenTo(this.model, "change:loss_type", this.render);
+            this.listenTo(this.model, "change", this.render);
         },
         tagName: "div",
         template: Handlebars.templates.loss_type,
