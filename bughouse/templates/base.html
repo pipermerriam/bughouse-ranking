@@ -7,15 +7,22 @@
     </head>
     <body>
         {% block body %}
-            <ul class="nav nav-tabs">
-                <li role="presentation"><a href="/">Home</a></li>
-                <li role="presentation"><a href="{% url 'create-player' %}">New Player</a></li>
-                <li role="presentation"><a href="{% url 'team-leaderboard' %}">Team Leaderboard</a></li>
-                <li role="presentation"><a href="{% url 'individual-leaderboard' %}">Individual Leaderboard</a></li>
-            </ul>
+            <nav class="navbar navbar-default" id="main-nav">
+            
             <div class="container">
+                <div class="bh-brand">
+                </div>
                 <h1>{% block heading %}{% endblock %}</h1>
             </div>
+                <div class="nav-wrap">
+                    <ul class="nav navbar-nav">
+                        <li role="presentation"><a href="/">Home</a></li>
+                        <li role="presentation"><a href="{% url 'create-player' %}">New Player</a></li>
+                        <li role="presentation"><a href="{% url 'team-leaderboard' %}">Team Leaderboard</a></li>
+                        <li role="presentation"><a href="{% url 'individual-leaderboard' %}">Individual Leaderboard</a></li>
+                    </ul>
+                </div>
+            </nav>
             {% block content %}
             {% endblock content %}
         {% endblock body %}
