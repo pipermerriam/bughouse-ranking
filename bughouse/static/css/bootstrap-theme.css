@@ -13,7 +13,7 @@
 .btn-success,
 .btn-info,
 .btn-warning,
-.btn-danger {
+.btn-danger, .btn-white,.btn-black {
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
   -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -53,6 +53,31 @@
   -webkit-box-shadow: 0 2px 0 0 #BCBCBC;
   box-shadow: 0 2px 0 0 #BCBCBC;
   border-width: 2px;
+  color: #fff;
+}
+.btn-white {
+  background: #fff;
+  border-color: #e5e5e5;
+  text-shadow: 0 1px 0 rgba(0,0,0,.2);
+  -webkit-box-shadow: 0 2px 0 0 #e5e5e5;
+  box-shadow: 0 2px 0 0 #e5e5e5;
+  border-width: 2px;
+  color: #85868f;
+}
+.btn-black {
+  background: #85868f;
+  border-color: #4F5161;
+  text-shadow: 0 1px 0 rgba(0,0,0,.2);
+  -webkit-box-shadow: 0 2px 0 0 #4F5161;
+  box-shadow: 0 2px 0 0 #4F5161;
+  border-width: 2px;
+  color: #fff;
+}
+.btn-white.selected, .btn-black.selected {
+  background-color: #25B1DE;
+  border-color: #229FC8;
+  -webkit-box-shadow: 0 2px 0 0 #229FC8;
+  box-shadow: 0 2px 0 0 #229FC8;
   color: #fff;
 }
 .btn-default:hover,
