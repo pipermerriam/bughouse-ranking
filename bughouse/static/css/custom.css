@@ -60,12 +60,16 @@ a:visited {
     float: left;
     border-radius: 50%;
 }
-
-.player-container.selected {
+.player-container {
+    opacity: .6;
+}
+.player-container.selected, .player-container.available {
+    opacity: 1;
+}
+.player-container.selected img {
     border-color: #3AC14A;
 }
 .player {
-
     border: 5px solid #4F5161; ;
     border-radius: 50%;
     /* -webkit-mask: url(../images/poly.svg) top left / 80% no-repeat;*/ 
