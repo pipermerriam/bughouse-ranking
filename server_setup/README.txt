@@ -16,6 +16,7 @@ cp ./etc_uwsgi_apps_available/bughouse.ini to /etc/uwsgi/apps_available/bughouse
 
 ln -s /etc/uwsgi/apps_available/bughouse.ini /etc/uwsgi/apps_enabled/bughouse.ini
 
-place uwsgi_environment.env in roots home dir
+# not including this in the repo, since it contains passwords n stuff
+# place uwsgi_environment.env in roots home dir
 place deploy_bugsport.sh in roots home dir and chmod +x on it
 
