@@ -93,6 +93,7 @@ a:visited {
     background: #E53944;
 }
 .player-status.black {
+    -webkit-transform: scaleX(-1);
     transform: scaleX(-1);
     left: 0;
      -webkit-mask: url(../images/curve.svg) 0% 125% / 100% no-repeat;
@@ -102,6 +103,7 @@ a:visited {
     background: url(../images/white-team.svg) no-repeat top left / cover;
     height: 25%;
     width: 25%;
+    -webkit-transform: scaleX(-1);
     transform: scaleX(-1);
     left: 63%;
     bottom: 20%;
@@ -112,6 +114,7 @@ a:visited {
 }
 .player-status.white .color {
     left: 60%;
+    -webkit-transform: scaleX(1);
     transform: scaleX(1);
 }
 .win .player-status img, .player-container.win img{
