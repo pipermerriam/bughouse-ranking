@@ -1,14 +1,29 @@
-<h2>Pick losing team's colors</h2>
-<div class="player-container lose{{#if isWhiteLoser }} selected{{/if}}">
-    <img src="{{ losingWhite.icon_url }}" class="player img-responsive" id="{{ losingWhite.name }}"/>
-    <div class="player-status white">
+<div class="row">
+    <div class="col-xs-12"> 
+        <h2>Pick losing team's colors</h2>
     </div>
 </div>
-<a class="btn btn-success white">Loser (White)</a>
-<a class="swap"> swap </a>
-<div class="player-container lose{{#if isBlackLoser }} selected{{/if}}">
-    <img src="{{ losingBlack.icon_url }}" class="player img-responsive" id="{{ losingBlack.name }}"/>
-     <div class="player-status black">
+<div class="row">
+    <div class="col-xs-5">
+        <div class="player-container lose{{#if isWhiteLoser }} selected{{/if}}">
+            <img src="{{ losingWhite.icon_url }}" class="player img-responsive" id="{{ losingWhite.name }}"/>
+            <div class="player-status white">
+                <div class="color"></div>
+            </div>
+        </div>
+        <a class="btn btn-success white mont">Loser (White)</a>
+    </div>
+    <div class="col-xs-2">
+        <a class="swap"> swap </a>
+    </div>
+    <div class="col-xs-5">
+        <div class="player-container lose{{#if isBlackLoser }} selected{{/if}}">
+            <img src="{{ losingBlack.icon_url }}" class="player img-responsive" id="{{ losingBlack.name }}"/>
+             <div class="player-status black">
+                <div class="color"></div>
+            </div>
+        </div>
+        <a class="btn btn-danger black mont">Loser (Black)</a>
     </div>
 </div>
-<a class="btn btn-danger black">Loser (Black)</a>
+

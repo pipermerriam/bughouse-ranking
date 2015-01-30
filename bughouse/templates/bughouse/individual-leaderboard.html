@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
-            <table data-toggle="table"> 
+            <table data-toggle="table" class = 'table table-striped'> 
                 <thead>
                     <tr>
                         <th data-field="player"> Player Name </th>
@@ -12,13 +12,12 @@
                         <th data-field="score"> Rating </th>
                   <tr>
               <thead>
-            </table>
         {% for player in players %}
-         <tr>   {{  player.name }}  </tr> 
-         <tr>   {{  player.icon }}</tr> 
-         <tr>   {{  player.latest_rating }} </tr> 
-         <br>
+        <tr><td>   {{  player.name }}  </td> 
+            <td>  <img src= '{{  player.icon }}' ></td> 
+         <td>   {{  player.latest_rating }} </td></tr> 
         {% endfor %}
+            </table>
         </div>
     </div>
 </div>

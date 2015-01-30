@@ -1,21 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="164px" height="92px" viewBox="0 0 164 92" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+<svg width="166px" height="107px" viewBox="0 0 166 107" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
     <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
-    <title>Rectangle 19</title>
+    <title>Rectangle 18</title>
     <desc>Created with Sketch.</desc>
-    <defs>
-        <path id="path-1" d="M82.8192719,-4.20467443e-16 C92.5986497,-2.50178129e-14 158.520474,36.6435235 162.339909,44.3816489 C166.159344,52.1197744 166.791361,126.340685 162.339909,133.144947 C157.888457,139.949208 90.7213359,177.526596 82.8192719,177.526596 C74.917208,177.526596 7.21764582,141.125322 3.29863473,133.144947 C-0.620376371,125.164572 -0.267644966,50.514638 3.29863473,44.3816489 C6.86491442,38.2486598 73.0398941,2.4176878e-14 82.8192719,-4.20467443e-16 Z"></path>
-    </defs>
-    <g id="Page-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="Rectangle-19" sketch:type="MSLayerGroup" transform="translate(-2.000000, -86.000000)">
-            <mask id="mask-2" sketch:name="Mask" fill="white">
-                <use xlink:href="#path-1"></use>
-            </mask>
-            <g id="Mask">
-                <use sketch:type="MSShapeGroup" xlink:href="#path-1"></use>
-                <use xlink:href="#path-1"></use>
-            </g>
-            <path d="M2.44042969,131.714844 C2.44042969,131.714844 35.9794508,147.018117 63.4794922,139.5 C90.4993076,132.113169 120.516602,77.9580078 166,87 L166,192 L0,192 L2.44042969,131.714844 Z" id="Rectangle-16" fill="#D81A08" sketch:type="MSShapeGroup" mask="url(#mask-2)"></path>
-        </g>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <path d="M0,46.3887752 C0,46.3887752 35.9794508,61.6920488 63.4794922,54.1739314 C90.4993076,46.7871009 120.516602,-7.36806076 166,1.67393143 L166,106.673931 L0,106.673931 L0,46.3887752 Z" id="Rectangle-18" fill="#000000" sketch:type="MSShapeGroup"></path>
     </g>
 </svg>
