@@ -52,13 +52,11 @@ a:visited {
 }
 
 .player-container {
-    margin: 10px;
     width: 33%; 
-    margin: 0 auto;
+    margin: 10px auto;
     box-sizing: border-box; 
     position: relative; 
     text-align: center; 
-/*    -webkit-mask: url(../images/poly.svg) top left / 80%  no-repeat; */     
     float: left;
     border-radius: 50%;
 }
@@ -67,6 +65,7 @@ a:visited {
     border-color: #3AC14A;
 }
 .player {
+
     border: 5px solid #4F5161; ;
     border-radius: 50%;
     /* -webkit-mask: url(../images/poly.svg) top left / 80% no-repeat;*/ 
@@ -108,7 +107,9 @@ a:visited {
 .win .player-status img, .player-container.win img{
     border-color: #3AC14A;
 }
-
+.loser-button {
+    text-align: center;
+}
 .lose .player-status img, .player-container.lose img {
     border-color: #E53944;
 }
