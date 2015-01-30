@@ -210,6 +210,9 @@ $(function(){
         editGame: function() {
             this.trigger("model:edit", this.model);
         },
+        setFocus: function() {
+            this.el.focus();
+        },
         events: {
             "click button.delete": "destroyGame",
             "click button.edit": "editGame"
@@ -224,6 +227,12 @@ $(function(){
         template: Handlebars.templates.recent_games,
         childView: RecentGameView,
         childViewContainer: "tbody",
+        onRenderCollection: function() {
+            this.on("add", this.setFocus);
+        },
+        setFocus: function(model, collection) {
+            model.listenToOnce("render", model.setFocus);
+        },
         editGame: function(childView, game) {
             this.trigger("model:edit", game);
         }

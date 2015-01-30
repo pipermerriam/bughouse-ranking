@@ -14,7 +14,7 @@
               <thead>
         {% for player in players %}
         <tr><td>   {{  player.name }}  </td> 
-            <td>  <img class ='leaderboard-icon img-responsive'  src= '/static/images/player-icons/{{  player.icon }}' ></td> 
+            <td>  <img class ='leaderboard-icon img-responsive'  src= '{{ player.icon_url }}' ></td> 
          <td>   {{  player.latest_rating }} </td></tr> 
         {% endfor %}
             </table>
