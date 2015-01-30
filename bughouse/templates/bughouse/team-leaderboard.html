@@ -12,16 +12,14 @@
                         <th data-field="team_score">Team Score </th>
                   <tr>
               <thead>
-            </table>
         {% for team in teams %}
         <tr><td>   {{  team.white_player.name }}  </td> 
          <td>   {{  team.black_player.name }}</td> 
          <td>   {{ team.latest_rating }}</td> </tr> 
-         <br>
         {% endfor %}
+            </table>
         </div>
     </div>
 </div>
-{
 
 {% endblock content %}

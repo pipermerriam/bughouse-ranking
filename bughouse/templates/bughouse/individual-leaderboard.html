@@ -12,12 +12,12 @@
                         <th data-field="score"> Rating </th>
                   <tr>
               <thead>
-            </table>
         {% for player in players %}
         <tr><td>   {{  player.name }}  </td> 
-         <td>   {{  player.icon }}</td> 
+            <td>  <img src= '{{  player.icon }}' ></td> 
          <td>   {{  player.latest_rating }} </td></tr> 
         {% endfor %}
+            </table>
         </div>
     </div>
 </div>
