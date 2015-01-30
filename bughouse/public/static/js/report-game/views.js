@@ -138,13 +138,32 @@ $(function(){
     });
 
     LosingColorView = Backbone.Marionette.ItemView.extend({
+        initialize: function(options) {
+            this.listenTo(this.model, "change", this.render);
+        },
         tagName: "div",
         template: Handlebars.templates.losing_color,
         radioChanged: function(e) {
             this.model.set("losing_color", e.currentTarget.value);
         },
+        swapSelection: function() {
+            var whiteSelection = this.model.get("losing_team_white");
+            var blackSelection = this.model.get("losing_team_black");
+            this.model.set({
+                losing_team_white: blackSelection,
+                losing_team_black: whiteSelection
+            });
+        },
+        setWhiteAsLoser: function() {
+            this.model.set("losing_color", "white");
+        },
+        setBlackAsLoser: function() {
+            this.model.set("losing_color", "black");
+        },
         events: {
-            "change input[type=\"radio\"]": "radioChanged"
+            "click a.swap": "swapSelection",
+            "click a.white": "setWhiteAsLoser",
+            "click a.black": "setBlackAsLoser"
         }
     });
 
