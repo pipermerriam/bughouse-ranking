@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
-            <table data-toggle="table"> 
+            <table data-toggle="table" class = 'table table-striped'> 
                 <thead>
                     <tr>
                         <th data-field="white_player">White Player Name </th>
@@ -14,9 +14,9 @@
               <thead>
             </table>
         {% for team in teams %}
-         <tr>   {{  team.white_player.name }}  </tr> 
-         <tr>   {{  team.black_player.name }}</tr> 
-         <tr>   {{ team.latest_rating }} </tr> 
+        <tr><td>   {{  team.white_player.name }}  </td> 
+         <td>   {{  team.black_player.name }}</td> 
+         <td>   {{ team.latest_rating }}</td> </tr> 
          <br>
         {% endfor %}
         </div>
