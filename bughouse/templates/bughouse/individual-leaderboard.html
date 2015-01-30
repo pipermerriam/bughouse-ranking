@@ -14,13 +14,12 @@
               <thead>
         {% for player in players %}
         <tr><td>   {{  player.name }}  </td> 
-            <td>  <img src= "{{  player.icon_url }}" ></td> 
+            <td>  <img class ='leaderboard-icon img-responsive'  src= '{{ player.icon_url }}' ></td> 
          <td>   {{  player.latest_rating }} </td></tr> 
         {% endfor %}
             </table>
         </div>
     </div>
 </div>
-{
 
 {% endblock content %}

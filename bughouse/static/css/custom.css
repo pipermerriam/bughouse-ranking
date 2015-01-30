@@ -5,25 +5,69 @@ h3,
 h4,
 h5,
 h6 {text-transform: uppercase; text-align: center;}
+a:link {
+    color: #25B1DE;
+}
+a:hover {
+    color: #229FC8;
+}
+a:visited {
+    color: #25B1DE;
+}
 .btn {
     margin-bottom: 10px;
 }
+
+.navbar.navbar-default#main-nav {
+    background: url(../images/header-bg.png) no-repeat;
+    background-size: cover;
+    color: #fff;
+}
+.bh-brand {
+    background: url(../images/logo.png) no-repeat;
+    background-size: cover;
+    height: 100px; 
+    width: 77px;
+    margin: 20px auto;
+}
+.nav-wrap {
+    overflow: hidden;
+    text-align: center;
+    background: -moz-linear-gradient(top,  rgba(79,81,97,0) 0%, rgba(79,81,97,1) 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(79,81,97,0)), color-stop(100%,rgba(79,81,97,1)));
+    background: -webkit-linear-gradient(top,  rgba(79,81,97,0) 0%,rgba(79,81,97,1) 100%);
+    background: -o-linear-gradient(top,  rgba(79,81,97,0) 0%,rgba(79,81,97,1) 100%);
+    background: -ms-linear-gradient(top,  rgba(79,81,97,0) 0%,rgba(79,81,97,1) 100%);
+    background: linear-gradient(to bottom,  rgba(79,81,97,0) 0%,rgba(79,81,97,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#004f5161', endColorstr='#4f5161',GradientType=0 );
+}
+.nav-wrap .navbar-nav li a {
+    font-family: "Montserrat";
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0 1px 1px rgba(0,0,0,.3);
+}
+.nav-wrap .navbar-nav li a:hover {
+    color: #fafafa;
+}
+
 .player-container {
-    padding: 5px;
+    margin: 10px;
     width: 33%; 
     margin: 0 auto;
     box-sizing: border-box; 
     position: relative; 
     text-align: center; 
-/*    -webkit-mask: url(../images/poly.svg) top left / 80%  no-repeat; */    
-    background: #4F5161;  
+/*    -webkit-mask: url(../images/poly.svg) top left / 80%  no-repeat; */     
     float: left;
     border-radius: 50%;
 }
+
 .player-container.selected {
-    background: #3AC14A;
+    border-color: #3AC14A;
 }
 .player {
+    border: 5px solid #4F5161; ;
     border-radius: 50%;
     /* -webkit-mask: url(../images/poly.svg) top left / 80% no-repeat;*/ 
     /*-webkit-clip-path: polygon(50% 1%,97% 25%,97% 75%,50% 100%, 2% 75%, 2% 25%);*/
@@ -61,16 +105,21 @@ h6 {text-transform: uppercase; text-align: center;}
     left: 60%;
     transform: scaleX(1);
 }
-.win .player-status, .player-container.win {
-    background: #3AC14A;
+.win .player-status img, .player-container.win img{
+    border-color: #3AC14A;
 }
 
-.lose .player-status, .player-container.lose {
-    background: #E53944;
+.lose .player-status img, .player-container.lose img {
+    border-color: #E53944;
 }
 
 .mont {font-family: "Montserrat", helvetica, sans-serif; text-transform: uppercase;}
 
+.leaderboard-icon {
+   max-width: 50%;
+   border-radius: 50%;
+}
 @media (max-width: 667px) {
     #losing-team-color .player-container, #winning-team-color .player-container {width: 100%;}
 }
+
