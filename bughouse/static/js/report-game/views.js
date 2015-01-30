@@ -168,13 +168,36 @@ $(function(){
     });
 
     LossTypeView = Backbone.Marionette.ItemView.extend({
+        initialize: function(options) {
+            this.listenTo(this.model, "change:loss_type", this.render);
+        },
         tagName: "div",
         template: Handlebars.templates.loss_type,
-        radioChanged: function(e) {
-            this.model.set("loss_type", e.currentTarget.value);
+        setCheckmate: function() {
+            this.model.set("loss_type", "checkmate");
+        },
+        setTime: function() {
+            this.model.set("loss_type", "time");
+        },
+        setSwindle: function() {
+            this.model.set("loss_type", "swindle");
+        },
+        setImminentDeath: function() {
+            this.model.set("loss_type", "imminent-death");
+        },
+        templateHelpers: function() {
+            return {
+                'isCheckmate': this.model.get("loss_type") === "checkmate",
+                'isTime': this.model.get("loss_type") === "time",
+                'isSwindle': this.model.get("loss_type") === "swindle",
+                'isImminentDeath': this.model.get("loss_type") === "imminent-death"
+            };
         },
         events: {
-            "change input[type=\"radio\"]": "radioChanged"
+            "click button.checkmate": "setCheckmate",
+            "click button.time": "setTime",
+            "click button.swindle": "setSwindle",
+            "click button.imminent-death": "setImminentDeath",
         }
     });
 

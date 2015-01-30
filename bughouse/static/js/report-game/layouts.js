@@ -12,7 +12,7 @@ $(function(){
         regions: {
             winning_team: '#winning-team-selection',
             losing_team: '#losing-team-selection',
-            losing_color: '#losing-color',
+            losing_color: '#losing-team-color',
             loss_type: "#loss-type"
         },
         submit: function(e) {

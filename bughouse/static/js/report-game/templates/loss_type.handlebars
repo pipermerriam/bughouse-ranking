@@ -1,11 +1,17 @@
-<div class="form-group form-group-lg">
-    <p>How did the game end?</p>
-    {{#each lossTypeOptions }}
-        <div class="radio">
-            <label>
-                <input type="radio" value="{{ value }}"{{#if isSelected }} checked{{/if}}>
-                {{ name }}
-            </label>
+<div class="container">
+    <h1>How did the game end?</h1>
+    <div class="row">
+        <div class="col-sm-6">
+            <button class="btn btn-block btn-{{#if isTime }}success{{else}}default{{/if}} time">Time</button>
         </div>
-    {{/each}}
+        <div class="col-sm-6">
+            <button class="btn btn-block btn-{{#if isCheckmate }}success{{else}}default{{/if}} checkmate">Checkmate</button>
+        </div>
+        <div class="col-sm-6">
+            <button class="btn btn-block btn-{{#if isSwindle }}success{{else}}default{{/if}} swindle">Swindle</button>
+        </div>
+        <div class="col-sm-6">
+            <button class="btn btn-block btn-{{#if isImminentDeath }}success{{else}}default{{/if}} imminent-death">Imminent Death</button>
+        </div>
+    </div>
 </div>
