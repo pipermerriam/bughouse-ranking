@@ -14,7 +14,7 @@
               <thead>
         {% for player in players %}
         <tr><td>   {{  player.name }}  </td> 
-            <td>  <img src= '{{  player.icon }}' ></td> 
+            <td>  <img src= "{{  player.icon_url }}" ></td> 
          <td>   {{  player.latest_rating }} </td></tr> 
         {% endfor %}
             </table>
