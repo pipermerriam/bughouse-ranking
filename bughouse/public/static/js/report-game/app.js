@@ -29,29 +29,15 @@ $(function(){
             /*
              * Setup the four select a player views.
              */
-            this.game_form_layout.winning_team_white.show(new app.PlayerSelectView({
-                playerColor: "White",
-                teamLabel: "Winning",
-                modelAttribute: "winning_team_white",
-                model: game
+            this.game_form_layout.winning_team.show(new app.PlayerSelectView({
+                isWinners: true,
+                model: game,
+                collection: this.players
             }));
-            this.game_form_layout.winning_team_black.show(new app.PlayerSelectView({
-                playerColor: "Black",
-                teamLabel: "Winning",
-                modelAttribute: "winning_team_black",
-                model: game
-            }));
-            this.game_form_layout.losing_team_white.show(new app.PlayerSelectView({
-                playerColor: "White",
-                teamLabel: "Losing",
-                modelAttribute: "losing_team_white",
-                model: game
-            }));
-            this.game_form_layout.losing_team_black.show(new app.PlayerSelectView({
-                playerColor: "Black",
-                teamLabel: "Losing",
-                modelAttribute: "losing_team_black",
-                model: game
+            this.game_form_layout.losing_team.show(new app.PlayerSelectView({
+                isWinners: false,
+                model: game,
+                collection: this.players
             }));
         },
         setupLossTypeSelect: function(game) {

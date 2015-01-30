@@ -3,14 +3,56 @@ var app = app || {};
 $(function(){
     "use-strict";
 
-    var PlayerSelectView = Backbone.Marionette.ItemView.extend({
+    var PlayerIconView = Backbone.Marionette.ItemView.extend({
+        tagName: "div",
+        template: Handlebars.templates.player_icon,
+        toggleSelection: function(e) {
+            var playerId = this.model.id;
+            this.trigger("toggleSelection", playerId);
+        },
+        templateHelpers: function() {
+            return {
+                isPlayerSelected: this.options.isPlayerSelected(this.model.id),
+                isPlayerAvailable: this.options.isPlayerAvailable(this.model.id)
+            };
+        },
+        events: {
+            "click div.player-container.available": "toggleSelection",
+            "click div.player-container.selected": "toggleSelection"
+        }
+    });
+
+    var PlayerSelectView = Backbone.Marionette.CompositeView.extend({
         initialize: function(options) {
             this.errors = [];
             this.listenTo(this.model, "change", this.render);
             this.listenTo(this.model, "validate", this.validate);
+            this.on("childview:toggleSelection", this.toggleSelection);
         },
         tagName: "div",
         template: Handlebars.templates.player_select,
+        childView: PlayerIconView,
+        childViewContainer: 'div.players',
+        /*
+         *
+         */
+        toggleSelection: function(childView, playerId) {
+            if ( playerId === this.model.get(this.getWhiteAttr()) ) {
+                this.model.set(this.getWhiteAttr(), null);
+            } else if ( playerId === this.model.get(this.getBlackAttr()) ) {
+                this.model.set(this.getBlackAttr(), null);
+            } else {
+                this.setFirstEmptyColor(playerId);
+            }
+            console.log(this.model.attributes)
+        },
+        setFirstEmptyColor: function(playerId) {
+            if ( !this.hasWhiteSelection() ) {
+                this.model.set(this.getWhiteAttr(), playerId);
+            } else if ( !this.hasBlackSelection() ) {
+                this.model.set(this.getBlackAttr(), playerId);
+            }
+        },
         /*
          *  Validation
          */
@@ -19,60 +61,80 @@ $(function(){
         },
         validate: function() {
             this.errors = [];
-            if ( !this.hasSelection() ) {
+            if ( !this.hasWhiteSelection() || !this.hasBlackSelection() ) {
                 this.errors.push("Please select a player");
             }
             this.render();
         },
         /*
+         *  Child View Stuff
+         */
+        isPlayerSelected: function(playerId) {
+            if ( this.hasWhiteSelection() ) {
+                if ( this.selectedWhitePlayer().id === playerId ) {
+                    return true;
+                }
+            }
+            if ( this.hasBlackSelection() ) {
+                if ( this.selectedBlackPlayer().id === playerId ) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        isPlayerAvailable: function(playerId) {
+            return _.contains(_.pluck(this.model.unselectedPlayers(), 'id'), playerId);
+        },
+        childViewOptions: function() {
+            return {
+                isPlayerSelected: _.bind(this.isPlayerSelected, this),
+                isPlayerAvailable: _.bind(this.isPlayerAvailable, this)
+            };
+        },
+        /*
          *  Template Helpers
          */
-        playerChanged: function(e) {
-            var playerId = e.currentTarget.value;
-            this.model.set(this.options.modelAttribute, playerId);
+        getPrefix: function() {
+            return this.options.isWinners ? "winning_team_" : "losing_team_";
         },
-        hasSelection: function() {
-            return _.isObject(this.selectedPlayer());
+        getWhiteAttr: function() {
+            return this.getPrefix() + "white";
         },
-        selectedPlayer: function() {
-            var playerId = this.model.get(this.options.modelAttribute);
+        getBlackAttr: function() {
+            return this.getPrefix() + "black";
+        },
+        teamDisplayName: function() {
+            return this.options.isWinners ? "Winning" : "Losing";
+        },
+        selectedWhitePlayer: function() {
+            var playerId = this.model.get(this.getWhiteAttr());
             return this.model.getPlayer(playerId);
         },
-        playerChoices: function() {
-            var availablePlayers = this.model.unselectedPlayers();
-            if ( this.hasSelection() ) {
-                availablePlayers.push(this.selectedPlayer());
-            }
-            return availablePlayers;
+        selectedBlackPlayer: function() {
+            var playerId = this.model.get(this.getBlackAttr());
+            return this.model.getPlayer(playerId);
+        },
+        hasWhiteSelection: function() {
+            return _.isObject(this.selectedWhitePlayer());
+        },
+        hasBlackSelection: function() {
+            return _.isObject(this.selectedBlackPlayer());
+        },
+        hasBothSelections: function() {
+            return this.hasWhiteSelection() && this.hasBlackSelection();
         },
         templateHelpers: function() {
             return {
                 errors: this.errors,
                 hasErrors: this.hasErrors(),
-                teamLabel: this.options.teamLabel,
-                selectedPlayer: this.selectedPlayer() ? this.serializeModel(this.selectedPlayer()) : null,
-                hasSelection: this.hasSelection(),
-                playerColor: this.options.playerColor,
-                playerChoices: _.map(this.playerChoices(), this.serializeModel)
+                teamDisplayName: this.teamDisplayName(),
+                hasWhiteSelection: this.hasWhiteSelection(),
+                hasBlackSelection: this.hasBlackSelection(),
+                hasBothSelections: this.hasBothSelections(),
+                selectedWhitePlayer: this.selectedWhitePlayer(),
+                selectedBlackPlayer: this.selectedBlackPlayer(),
             };
         },
-        events: {
-            "change select": "playerChanged"
-        }
-    });
-
-    Handlebars.registerHelper("isPlayerSelected", function(selectedPlayer) {
-        /*
-         *  Helper for determining which (if any) option should be selected.
-         */
-        if ( !_.isObject(selectedPlayer) ) {
-            return "";
-        }
-        else if ( selectedPlayer.id === this.id ) {
-            return " selected=\"selected\"";
-        } else {
-            return "";
-        }
     });
 
     LosingColorView = Backbone.Marionette.ItemView.extend({

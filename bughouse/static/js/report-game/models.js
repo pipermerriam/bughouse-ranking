@@ -64,12 +64,14 @@ $(function(){
          */
         exportable: [
             "lossTypeOptions",
-            "losingColorOptions",
+            "isWhiteLoser",
+            "isBlackLoser",
             "isEditable",
             "winningWhite",
             "winningBlack",
             "losingWhite",
-            "losingBlack"
+            "losingBlack",
+            "selectedPlayers",
         ],
         isEditable: function() {
             if ( _.isNull(this.get("created_at")) ) {
@@ -111,12 +113,13 @@ $(function(){
                 {name: "Imminent Death", value: "imminent-death", isSelected: (selectedValue === "imminent-death")}
             ];
         },
-        losingColorOptions: function() {
+        isWhiteLoser: function() {
             var selectedColor = this.get("losing_color");
-            return [
-                {name: "White", value: "white", isSelected: (selectedColor === "white")},
-                {name: "Black", value: "black", isSelected: (selectedColor === "black")},
-            ]
+            return selectedColor === "white";
+        },
+        isBlackLoser: function() {
+            var selectedColor = this.get("losing_color");
+            return selectedColor === "black";
         },
         winningWhite: function() {
             return this.getPlayer(this.get("winning_team_white"));

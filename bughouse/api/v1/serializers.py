@@ -18,6 +18,18 @@ class PlayerField(serializers.IntegerField):
         return value.pk
 
 
+class PlayerSerializer(serializers.ModelSerializer):
+    icon_url = serializers.CharField()
+
+    class Meta:
+        model = Player
+        fields = (
+            'id',
+            'name',
+            'icon_url',
+        )
+
+
 class GameSerializer(serializers.ModelSerializer):
     winning_team_white = PlayerField(source="winning_team.white_player")
     winning_team_black = PlayerField(source="winning_team.black_player")

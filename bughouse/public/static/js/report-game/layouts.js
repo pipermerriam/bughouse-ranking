@@ -10,10 +10,8 @@ $(function(){
         tagName: "div",
         template: Handlebars.templates.game_form,
         regions: {
-            winning_team_white: '#winning-white-player',
-            winning_team_black: '#winning-black-player',
-            losing_team_white: '#losing-white-player',
-            losing_team_black: '#losing-black-player',
+            winning_team: '#winning-team-selection',
+            losing_team: '#losing-team-selection',
             losing_color: '#losing-color',
             loss_type: "#loss-type"
         },

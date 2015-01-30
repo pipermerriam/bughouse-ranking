@@ -1,9 +1,5 @@
 <div class="form-group form-group-lg{{#if hasErrors }} has-error{{/if}}">
-    <label class="control-label" for="exampleInputEmail1">{{ teamLabel }} Team: {{ playerColor }} Player</label>
-    <select class="form-control">
-        <option>-------------</option>
-        {{#each playerChoices }}
-            <option value="{{ id }}"{{ isPlayerSelected ../selectedPlayer }}>{{ name }}</option>
-        {{/each}}
-    </select>
+    <h2>{{ teamDisplayName }} Team</h2>
+    <div class="players">
+    </div>
 </div>

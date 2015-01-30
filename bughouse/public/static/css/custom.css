@@ -1,0 +1,41 @@
+@import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {text-transform: uppercase;}
+.player-container {
+    padding: 5px 7px 5px 5px;
+    width: 25%; 
+    box-sizing: border-box; 
+    position: relative; 
+    text-align: center; 
+    -webkit-mask: url(../images/poly.svg) top left / 80%  no-repeat; 
+    background: #4F5161;  
+    float: left;
+}
+.player-container.selected {
+    background: #3AC14A;
+}
+.player {
+    -webkit-mask: url(../images/poly.svg) top left / 80% no-repeat; 
+    /*-webkit-clip-path: polygon(50% 1%,97% 25%,97% 75%,50% 100%, 2% 75%, 2% 25%);*/
+}
+
+.player-status {
+    position: absolute; 
+    bottom: 9%; 
+    right: 0px;
+    -webkit-mask: url(../images/curve.svg) top left / 80% no-repeat; 
+    height: 50%; 
+    width: 100%; 
+    background: #4F5161;
+}
+.win .player-status, .player-container.win {
+    background: #3AC14A;
+}
+
+.lose .player-status, .player-container.lose {
+    background: #D81A08;
+}

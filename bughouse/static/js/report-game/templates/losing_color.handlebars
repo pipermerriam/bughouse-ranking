@@ -1,11 +1,14 @@
-<div class="form-group form-group-lg{{#if hasErrors }} has-error{{/if}}">
-    Which Color Lost?
-    {{#each losingColorOptions }}
-        <div class="radio">
-            <label>
-                <input type="radio" value="{{ value }}"{{#if isSelected }} checked{{/if}}>
-                {{ name }}
-            </label>
-        </div>
-    {{/each}}
+<h2>Pick losing team's colors</h2>
+<div class="player-container lose{{#if isWhiteLoser }} selected{{/if}}">
+    <img src="{{ losingWhite.icon_url }}" class="player img-responsive" id="{{ losingWhite.name }}"/>
+    <div class="player-status">
+    </div>
 </div>
+<a class="btn btn-success">Loser (White)</a>
+<a class="swap"> swap </a>
+<div class="player-container lose{{#if isBlackLoser }} selected{{/if}}">
+    <img src="{{ losingBlack.icon_url }}" class="player img-responsive" id="{{ losingBlack.name }}"/>
+     <div class="player-status">
+    </div>
+</div>
+<a class="btn btn-danger">Loser (Black)</a>
