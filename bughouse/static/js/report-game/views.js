@@ -3,14 +3,56 @@ var app = app || {};
 $(function(){
     "use-strict";
 
-    var PlayerSelectView = Backbone.Marionette.ItemView.extend({
+    var PlayerIconView = Backbone.Marionette.ItemView.extend({
+        tagName: "div",
+        template: Handlebars.templates.player_icon,
+        toggleSelection: function(e) {
+            var playerId = this.model.id;
+            this.trigger("toggleSelection", playerId);
+        },
+        templateHelpers: function() {
+            return {
+                isPlayerSelected: this.options.isPlayerSelected(this.model.id),
+                isPlayerAvailable: this.options.isPlayerAvailable(this.model.id)
+            };
+        },
+        events: {
+            "click div.player-container.available": "toggleSelection",
+            "click div.player-container.selected": "toggleSelection"
+        }
+    });
+
+    var PlayerSelectView = Backbone.Marionette.CompositeView.extend({
         initialize: function(options) {
             this.errors = [];
             this.listenTo(this.model, "change", this.render);
             this.listenTo(this.model, "validate", this.validate);
+            this.on("childview:toggleSelection", this.toggleSelection);
         },
         tagName: "div",
-        template: Handlebars.compile($('#player-select-template').html()),
+        template: Handlebars.templates.player_select,
+        childView: PlayerIconView,
+        childViewContainer: 'div.players',
+        /*
+         *
+         */
+        toggleSelection: function(childView, playerId) {
+            if ( playerId === this.model.get(this.getWhiteAttr()) ) {
+                this.model.set(this.getWhiteAttr(), null);
+            } else if ( playerId === this.model.get(this.getBlackAttr()) ) {
+                this.model.set(this.getBlackAttr(), null);
+            } else {
+                this.setFirstEmptyColor(playerId);
+            }
+            console.log(this.model.attributes)
+        },
+        setFirstEmptyColor: function(playerId) {
+            if ( !this.hasWhiteSelection() ) {
+                this.model.set(this.getWhiteAttr(), playerId);
+            } else if ( !this.hasBlackSelection() ) {
+                this.model.set(this.getBlackAttr(), playerId);
+            }
+        },
         /*
          *  Validation
          */
@@ -19,105 +61,171 @@ $(function(){
         },
         validate: function() {
             this.errors = [];
-            if ( !this.hasSelection() ) {
+            if ( !this.hasWhiteSelection() || !this.hasBlackSelection() ) {
                 this.errors.push("Please select a player");
             }
             this.render();
         },
         /*
+         *  Child View Stuff
+         */
+        isPlayerSelected: function(playerId) {
+            if ( this.hasWhiteSelection() ) {
+                if ( this.selectedWhitePlayer().id === playerId ) {
+                    return true;
+                }
+            }
+            if ( this.hasBlackSelection() ) {
+                if ( this.selectedBlackPlayer().id === playerId ) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        isPlayerAvailable: function(playerId) {
+            return _.contains(_.pluck(this.model.unselectedPlayers(), 'id'), playerId);
+        },
+        childViewOptions: function() {
+            return {
+                isPlayerSelected: _.bind(this.isPlayerSelected, this),
+                isPlayerAvailable: _.bind(this.isPlayerAvailable, this)
+            };
+        },
+        /*
          *  Template Helpers
          */
-        playerChanged: function(e) {
-            var playerId = e.currentTarget.value;
-            this.model.set(this.options.modelAttribute, playerId);
+        getPrefix: function() {
+            return this.options.isWinners ? "winning_team_" : "losing_team_";
         },
-        hasSelection: function() {
-            return _.isObject(this.selectedPlayer());
+        getWhiteAttr: function() {
+            return this.getPrefix() + "white";
         },
-        selectedPlayer: function() {
-            var playerId = this.model.get(this.options.modelAttribute);
+        getBlackAttr: function() {
+            return this.getPrefix() + "black";
+        },
+        teamDisplayName: function() {
+            return this.options.isWinners ? "Winning" : "Losing";
+        },
+        selectedWhitePlayer: function() {
+            var playerId = this.model.get(this.getWhiteAttr());
             return this.model.getPlayer(playerId);
         },
-        playerChoices: function() {
-            var availablePlayers = this.model.unselectedPlayers();
-            if ( this.hasSelection() ) {
-                availablePlayers.push(this.selectedPlayer());
-            }
-            return availablePlayers;
+        selectedBlackPlayer: function() {
+            var playerId = this.model.get(this.getBlackAttr());
+            return this.model.getPlayer(playerId);
+        },
+        hasWhiteSelection: function() {
+            return _.isObject(this.selectedWhitePlayer());
+        },
+        hasBlackSelection: function() {
+            return _.isObject(this.selectedBlackPlayer());
+        },
+        hasBothSelections: function() {
+            return this.hasWhiteSelection() && this.hasBlackSelection();
         },
         templateHelpers: function() {
             return {
                 errors: this.errors,
                 hasErrors: this.hasErrors(),
-                teamLabel: this.options.teamLabel,
-                selectedPlayer: this.selectedPlayer() ? this.serializeModel(this.selectedPlayer()) : null,
-                hasSelection: this.hasSelection(),
-                playerColor: this.options.playerColor,
-                playerChoices: _.map(this.playerChoices(), this.serializeModel)
+                teamDisplayName: this.teamDisplayName(),
+                hasWhiteSelection: this.hasWhiteSelection(),
+                hasBlackSelection: this.hasBlackSelection(),
+                hasBothSelections: this.hasBothSelections(),
+                selectedWhitePlayer: this.selectedWhitePlayer(),
+                selectedBlackPlayer: this.selectedBlackPlayer(),
             };
         },
-        events: {
-            "change select": "playerChanged"
-        }
-    });
-
-    Handlebars.registerHelper("isPlayerSelected", function(selectedPlayer) {
-        /*
-         *  Helper for determining which (if any) option should be selected.
-         */
-        if ( !_.isObject(selectedPlayer) ) {
-            return "";
-        }
-        else if ( selectedPlayer.id === this.id ) {
-            return " selected=\"selected\"";
-        } else {
-            return "";
-        }
     });
 
     LosingColorView = Backbone.Marionette.ItemView.extend({
+        initialize: function(options) {
+            this.listenTo(this.model, "change", this.render);
+        },
         tagName: "div",
-        template: Handlebars.compile($('#losing-color-template').html()),
+        template: Handlebars.templates.losing_color,
         radioChanged: function(e) {
             this.model.set("losing_color", e.currentTarget.value);
         },
+        swapSelection: function() {
+            var whiteSelection = this.model.get("losing_team_white");
+            var blackSelection = this.model.get("losing_team_black");
+            this.model.set({
+                losing_team_white: blackSelection,
+                losing_team_black: whiteSelection
+            });
+        },
+        setWhiteAsLoser: function() {
+            this.model.set("losing_color", "white");
+        },
+        setBlackAsLoser: function() {
+            this.model.set("losing_color", "black");
+        },
         events: {
-            "change input[type=\"radio\"]": "radioChanged"
+            "click a.swap": "swapSelection",
+            "click a.white": "setWhiteAsLoser",
+            "click a.black": "setBlackAsLoser"
         }
     });
 
     LossTypeView = Backbone.Marionette.ItemView.extend({
+        initialize: function(options) {
+            this.listenTo(this.model, "change:loss_type", this.render);
+        },
         tagName: "div",
-        template: Handlebars.compile($('#loss-type-template').html()),
-        radioChanged: function(e) {
-            this.model.set("loss_type", e.currentTarget.value);
+        template: Handlebars.templates.loss_type,
+        setCheckmate: function() {
+            this.model.set("loss_type", "checkmate");
+        },
+        setTime: function() {
+            this.model.set("loss_type", "time");
+        },
+        setSwindle: function() {
+            this.model.set("loss_type", "swindle");
+        },
+        setImminentDeath: function() {
+            this.model.set("loss_type", "imminent-death");
+        },
+        templateHelpers: function() {
+            return {
+                'isCheckmate': this.model.get("loss_type") === "checkmate",
+                'isTime': this.model.get("loss_type") === "time",
+                'isSwindle': this.model.get("loss_type") === "swindle",
+                'isImminentDeath': this.model.get("loss_type") === "imminent-death"
+            };
         },
         events: {
-            "change input[type=\"radio\"]": "radioChanged"
+            "click button.checkmate": "setCheckmate",
+            "click button.time": "setTime",
+            "click button.swindle": "setSwindle",
+            "click button.imminent-death": "setImminentDeath",
         }
     });
 
     RecentGameView = Backbone.Marionette.ItemView.extend({
         tagName: "tr",
-        template: Handlebars.compile($('#game-row-template').html()),
+        template: Handlebars.templates.game_row,
         destroyGame: function() {
             this.model.destroy();
         },
         editGame: function() {
-            this.trigger(
+            this.trigger("model:edit", this.model);
         },
         events: {
             "click button.delete": "destroyGame",
-            "click button.edit": "editGame",
+            "click button.edit": "editGame"
         }
     });
 
     RecentGamesView = Backbone.Marionette.CompositeView.extend({
+        initialize: function() {
+            this.on("childview:model:edit", this.editGame);
+        },
         el: "#recent-games",
-        template: Handlebars.compile($('#recent-games-template').html()),
+        template: Handlebars.templates.recent_games,
         childView: RecentGameView,
-        childViewContainer: "tbody"
-        events: {
+        childViewContainer: "tbody",
+        editGame: function(childView, game) {
+            this.trigger("model:edit", game);
         }
     });
 

@@ -12,124 +12,7 @@
 
     <div id="recent-games">
     </div>
-
-
-{% verbatim %}
-<script id="game-form-template" type="text/x-handlebars-template">
-<div class="row">
-    <div class="col-md-6">
-        <div id="winning-white-player">
-            <!-- PlayerSelectView Winner/White -->
-        </div>
-        <div id="winning-black-player">
-            <!-- PlayerSelectView Winner/Black -->
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div id="losing-white-player">
-            <!-- Losing White Player Select View -->
-            <!-- PlayerSelectView Loser/White -->
-        </div>
-        <div id="losing-black-player">
-            <!-- PlayerSelectView Loser/Black -->
-        </div>
-
-        <div id="losing-color">
-            <!-- LossingColor -->
-        </div>
-    </div>
 </div>
-
-<div id="loss-type" class="row">
-    <!-- LossTypeView -->
-</div>
-
-<button type="button" class="btn btn-success btn-lg">Submit</button>
-</script>
-
-
-<script id="player-select-template" type="text/x-handlebars-template">
-<div class="form-group form-group-lg{{#if hasErrors }} has-error{{/if}}">
-    <label class="control-label" for="exampleInputEmail1">{{ teamLabel }} Team: {{ playerColor }} Player</label>
-    <select class="form-control">
-        <option>-------------</option>
-        {{#each playerChoices }}
-            <option value="{{ id }}"{{ isPlayerSelected ../selectedPlayer }}>{{ name }}</option>
-        {{/each}}
-    </select>
-</div>
-</script>
-
-
-<script id="losing-color-template" type="text/x-handlebars-template">
-<div class="form-group form-group-lg{{#if hasErrors }} has-error{{/if}}">
-    Which Color Lost?
-    {{#each losingColorOptions }}
-        <div class="radio">
-            <label>
-                <input type="radio" value="{{ value }}"{{#if isSelected }} checked{{/if}}>
-                {{ name }}
-            </label>
-        </div>
-    {{/each}}
-</div>
-</script>
-
-
-<script id="loss-type-template" type="text/x-handlebars-template">
-<div class="form-group form-group-lg">
-    <p>How did the game end?</p>
-    {{#each lossTypeOptions }}
-        <div class="radio">
-            <label>
-                <input type="radio" value="{{ value }}"{{#if isSelected }} checked{{/if}}>
-                {{ name }}
-            </label>
-        </div>
-    {{/each}}
-</div>
-</script>
-
-
-<script id="recent-games-template" type="text/x-handlebars-template">
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <td>ID</td>
-            <td>Winner (White)</td>
-            <td>Winner (Black)</td>
-            <td>Loser (White)</td>
-            <td>Loser (Black)</td>
-            <td>Losing Color</td>
-            <td>Loss Type</td>
-            <td>Controls</td>
-        </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
-</script>
-
-
-<script id="game-row-template" type="text/x-handlebars-template">
-<td># {{ id }}</td>
-<td>{{ winning_team_white }}</td>
-<td>{{ winning_team_black }}</td>
-<td>{{ losing_team_white }}</td>
-<td>{{ losing_team_black }}</td>
-<td>{{ losing_team_color }}</td>
-<td>{{ loss_type }}</td>
-<td>
-    {{#if isEditable }}
-        <button type="button" class="btn btn-danger delete">Delete</button>
-        <button type="button" class="btn btn-default edit">Edit</button>
-    {{/if}}
-    {{#if isFrozen }}
-        ---------
-    {{/if}}
-</td>
-</script>
-{% endverbatim %}
 {% endblock content %}
 
 
@@ -139,11 +22,11 @@
 $(document).ready(function() {
     var players = {{ players|json }};
     var recent_games = {{ recent_games|json }};
-    window.application = new app.ReportGameApp();
-    window.application.start({
+    window.application = new app.ReportGameApp({
         players: players,
         recent_games: recent_games,
     });
+    window.application.start();
 });
 </script>
 {% endblock body %}

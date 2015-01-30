@@ -1,14 +1,9 @@
+import os
+
 from django.db import models
 from django.db.models import Q
 from django.core.exceptions import ValidationError
-
-
-DEFAULT_ICON = 'test-default'
-ICON_CHOICES = (
-    (DEFAULT_ICON, DEFAULT_ICON),
-    ('test-a', 'test-a'),
-    ('test-b', 'test-b'),
-)
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 
 class Timestamped(models.Model):
@@ -23,11 +18,36 @@ class Timestamped(models.Model):
 INITIAL_RATING = 1000
 
 
+DEFAULT_ICON = ('default.jpg', 'Default')
+ICON_CHOICES = (
+    DEFAULT_ICON,
+    ('blake.jpg', 'Blake'),
+    ('johnny.jpg', 'Johnny'),
+    ('josh.jpg', 'Josh'),
+    ('kit.jpg', 'Kit'),
+    ('marla.jpg', 'Marla'),
+    ('piper.jpg', 'Piper'),
+    ('than.jpg', 'Than'),
+    ('brian.jpg', 'Brian'),
+    ('jon.jpg', 'Jon'),
+    ('kevin.jpg', 'Kevin'),
+    ('kyle.jpg', 'Kyle'),
+    ('nathan.jpg', 'Nathan'),
+    ('remi.jpg', 'Remi'),
+    ('yoav.jpg', 'Yoav'),
+)
+
+
+def get_icon_url(icon):
+    path = os.path.join('images', 'player-icons', icon)
+    return staticfiles_storage.url(path)
+
+
 class Player(Timestamped):
     name = models.CharField(max_length=255, unique=True)
     DEFAULT_ICON = DEFAULT_ICON
     ICON_CHOICES = ICON_CHOICES
-    icon = models.CharField(max_length=20, blank=True, default=DEFAULT_ICON)
+    icon = models.CharField(max_length=20, blank=True, default=DEFAULT_ICON[0])
 
     @property
     def latest_rating(self):
@@ -45,6 +65,10 @@ class Player(Timestamped):
             Q(losing_team__white_player=self) |
             Q(losing_team__black_player=self)
         ).distinct().count()
+
+    @property
+    def icon_url(self):
+        return get_icon_url(self.icon or self.DEFAULT_ICON[0])
 
     def clean_fields(self, *args, **kwargs):
         super(Player, self).clean_fields(*args, **kwargs)

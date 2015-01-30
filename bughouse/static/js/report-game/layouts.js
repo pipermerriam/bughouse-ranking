@@ -8,13 +8,11 @@ $(function(){
             this.application = options.application
         },
         tagName: "div",
-        template: Handlebars.compile($('#game-form-template').html()),
+        template: Handlebars.templates.game_form,
         regions: {
-            winning_team_white: '#winning-white-player',
-            winning_team_black: '#winning-black-player',
-            losing_team_white: '#losing-white-player',
-            losing_team_black: '#losing-black-player',
-            losing_color: '#losing-color',
+            winning_team: '#winning-team-selection',
+            losing_team: '#losing-team-selection',
+            losing_color: '#losing-team-color',
             loss_type: "#loss-type"
         },
         submit: function(e) {

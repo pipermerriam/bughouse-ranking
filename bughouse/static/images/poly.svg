@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="83px" height="89px" viewBox="0 0 83 89" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
+    <title>Mask</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="64.6443673%" y1="95.1895833%" x2="15.4848218%" y2="43.734375%" id="linearGradient-1">
+            <stop stop-color="#25B1DE" offset="0%"></stop>
+            <stop stop-color="#76C144" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+        <path id="path-2" d="M42.175591,1 C47.0665867,1 80.0363083,19.3266586 81.9465363,23.1967554 C83.8567643,27.0668522 84.1728572,64.1872262 81.9465363,67.5902662 C79.7202154,70.9933063 46.1276789,89.7870216 42.175591,89.7870216 C38.223503,89.7870216 4.36467489,71.5815203 2.40464563,67.5902662 C0.444616363,63.5990121 0.621029203,26.2640695 2.40464563,23.1967554 C4.18826205,20.1294413 37.2845952,1 42.175591,1 Z"></path>
+    </defs>
+    <g id="Page-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Artboard-1" sketch:type="MSArtboardGroup" transform="translate(-1.000000, -1.000000)">
+            <mask id="mask-3" sketch:name="Mask" fill="white">
+                <use xlink:href="#path-2"></use>
+            </mask>
+            <g id="Mask">
+                <use fill="url(#linearGradient-1)" sketch:type="MSShapeGroup" xlink:href="#path-2"></use>
+                <use fill="#000000" xlink:href="#path-2"></use>
+            </g>
+        </g>
+    </g>
+</svg>

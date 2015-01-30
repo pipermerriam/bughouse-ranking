@@ -44,5 +44,9 @@ docs/_build
 # SQLite3
 *.sqlite3
 
+# Static Files
+bughouse/public/static/*
+bughouse/public/media/*
+
 # 12 Factor
 .env
