@@ -6,7 +6,7 @@
 
 
 {% block content %}
-    <div class="container">
+    <div class="container" id="winning-team-selection">
     <h1>Winning Team</h1>
     TODO: Duplicate for losing team
         <div class="player-container">
@@ -62,37 +62,61 @@
             <img src="http://simpleenergy.com/wp-content/uploads/2014/09/Josh-head.jpg" class="player img-responsive" id="josh"/>
         </div>
     </div>
-    <div class="container">
+    <div class="container" id="winning-team-color">
         <h2>Pick winning team's colors</h2>
         <div class="player-container win">
             <img src="http://simpleenergy.com/wp-content/uploads/2014/04/Blakehead1.jpg" class="player img-responsive" id="blake"/>
-            <div class="player-status">
+            <div class="player-status white">
+                <div class="color">
+                </div>
             </div>
         </div>
         <a> swap </a>
         <div class="player-container win">
             <img src="http://simpleenergy.com/wp-content/uploads/2014/06/piper.jpg" class="player img-responsive" id="piper"/>
-             <div class="player-status">
+             <div class="player-status black">
+                <div class="color">
+                </div>
             </div>
         </div>
     </div>
-     <div class="container">
+     <div class="container" id="losing-team-color">
         <h2>Pick losing team's colors</h2>
         <div class="player-container lose">
             <img src="http://simpleenergy.com/wp-content/uploads/2014/04/Blakehead1.jpg" class="player img-responsive" id="blake"/>
-            <div class="player-status">
+            <div class="player-status white">
+                <div class="color">
+                </div>
             </div>
         </div>
         <a class="btn btn-success">Loser (right)</a>
         <a> swap </a>
         <div class="player-container lose">
             <img src="http://simpleenergy.com/wp-content/uploads/2014/06/piper.jpg" class="player img-responsive" id="piper"/>
-             <div class="player-status">
+             <div class="player-status black">
+                <div class="color">
+                </div>
             </div>
         </div>
         <a class="btn btn-danger">Loser (left)</a>
     </div>
-
+    <div class="container">
+        <h1>How did the game end?</h1>
+        <div class="row">
+            <div class="col-sm-6">
+                <button class="btn btn-block btn-default">Time</button>
+            </div>
+            <div class="col-sm-6">
+                <button class="btn btn-block btn-default">Checkmate</button>
+            </div>
+            <div class="col-sm-6">
+                <button class="btn btn-block btn-default">Swindle</button>
+            </div>
+            <div class="col-sm-6">
+                <button class="btn btn-block btn-default">Imminent Death</button>
+            </div>
+        </div>
+    </div>
 <div id="application" class="container">
     <div id="report-game-form">
     </div>
