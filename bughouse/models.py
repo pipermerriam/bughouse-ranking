@@ -38,6 +38,11 @@ ICON_CHOICES = (
 )
 
 
+def get_icon_url(icon):
+    path = os.path.join('images', 'player-icons', icon)
+    return staticfiles_storage.url(path)
+
+
 class Player(Timestamped):
     name = models.CharField(max_length=255, unique=True)
     DEFAULT_ICON = DEFAULT_ICON
@@ -63,9 +68,7 @@ class Player(Timestamped):
 
     @property
     def icon_url(self):
-        icon = self.icon or self.DEFAULT_ICON[0]
-        path = os.path.join('images', 'player-icons', icon)
-        return staticfiles_storage.url(path)
+        return get_icon_url(self.icon or self.DEFAULT_ICON[0])
 
     def clean_fields(self, *args, **kwargs):
         super(Player, self).clean_fields(*args, **kwargs)

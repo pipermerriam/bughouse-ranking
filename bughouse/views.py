@@ -3,6 +3,7 @@ from django.views import generic
 
 from bughouse.models import (
     Player,
+    get_icon_url,
     Game,
     Team,
 )
@@ -50,7 +51,9 @@ class CreatePlayerView(generic.CreateView):
         available_icons = tuple((
             value for value in Player.ICON_CHOICES if value[0] not in used_icons
         ))
-        return available_icons
+        return tuple((
+            (v[0], get_icon_url(v[0]), v[1]) for v in available_icons
+        ))
 
 
 class TeamLeaderboard(generic.ListView):

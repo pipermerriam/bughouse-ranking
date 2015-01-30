@@ -11,9 +11,10 @@
                     <input class="form-control" name="{{ form.name.html_name }}" id="{{ form.name.auto_id }}" placeholder="Player Name">
                 </div>
                 <div class="form-group">
-                    {% for option, display in available_icons %}
+                    {% for value, icon_url, display in available_icons %}
                         <label>
-                            <input type="radio" name="{{ form.icon.html_name }}" id="{{ form.icon.auto_id }}-{{ forloop.counter0 }}" value="{{ option }}">
+                            <input type="radio" name="{{ form.icon.html_name }}" id="{{ form.icon.auto_id }}-{{ forloop.counter0 }}" value="{{ value }}"{% if value == 'default.jpg' %} checked{% endif %}>
+                            <img src="{{ icon_url }}">
                         </label>
                     {% endfor %}
                 </div>
