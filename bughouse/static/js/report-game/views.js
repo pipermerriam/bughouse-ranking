@@ -169,21 +169,25 @@ $(function(){
 
     LossTypeView = Backbone.Marionette.ItemView.extend({
         initialize: function(options) {
-            this.listenTo(this.model, "change:loss_type", this.render);
+            this.listenTo(this.model, "change", this.render);
         },
         tagName: "div",
         template: Handlebars.templates.loss_type,
         setCheckmate: function() {
-            this.model.set("loss_type", "checkmate");
+            this.setValue("checkmate");
         },
         setTime: function() {
-            this.model.set("loss_type", "time");
+            this.setValue("time");
         },
         setSwindle: function() {
-            this.model.set("loss_type", "swindle");
+            this.setValue("swindle");
         },
         setImminentDeath: function() {
-            this.model.set("loss_type", "imminent-death");
+            this.setValue("imminent-death");
+        },
+        setValue: function(value) {
+            this.model.set("loss_type", value);
+            this.model.trigger("game:submit");
         },
         templateHelpers: function() {
             return {
@@ -210,6 +214,9 @@ $(function(){
         editGame: function() {
             this.trigger("model:edit", this.model);
         },
+        setFocus: function() {
+            this.el.focus();
+        },
         events: {
             "click button.delete": "destroyGame",
             "click button.edit": "editGame"
@@ -224,6 +231,12 @@ $(function(){
         template: Handlebars.templates.recent_games,
         childView: RecentGameView,
         childViewContainer: "tbody",
+        onRenderCollection: function() {
+            this.on("add", this.setFocus);
+        },
+        setFocus: function(model, collection) {
+            model.listenToOnce("render", model.setFocus);
+        },
         editGame: function(childView, game) {
             this.trigger("model:edit", game);
         }

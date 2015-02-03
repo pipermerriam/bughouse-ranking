@@ -64,6 +64,7 @@ $(function(){
          */
         exportable: [
             "lossTypeOptions",
+            "isSubmittable",
             "isWhiteLoser",
             "isBlackLoser",
             "isEditable",
@@ -73,6 +74,15 @@ $(function(){
             "losingBlack",
             "selectedPlayers",
         ],
+        isSubmittable: function() {
+            if ( !(this.selectedPlayers().length) === 4 ) {
+                return false;
+            }
+            if ( _.isNull(this.get("losing_color")) ) {
+                return false;
+            }
+            return true;
+        },
         isEditable: function() {
             if ( _.isNull(this.get("created_at")) ) {
                 return true;
