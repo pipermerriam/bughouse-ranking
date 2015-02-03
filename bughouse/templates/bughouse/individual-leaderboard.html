@@ -13,9 +13,9 @@
                   <tr>
               <thead>
         {% for player in players %}
-        <tr><td valign = 'middle'>   {{  player.name }}  </td> 
-            <td valign = 'middle'>  <img class ='leaderboard-icon img-responsive'  src= '/static/images/player-icons/{{  player.icon }}' ></td> 
-         <td valign = 'middle'>   {{  player.latest_rating }} </td></tr> 
+       {% if player.total_games > 0 %} <tr><td valign = 'middle'>   {{  player.name }}{% endif %}  </td> 
+        {% if player.total_games > 0 %}    <td valign = 'middle'>  <img class ='leaderboard-icon img-responsive'  src= '/static/images/player-icons/ {{  player.icon }}'> {% endif %}   </td> 
+       {% if player.total_games > 0 %}  <td valign = 'middle'>    {{  player.latest_rating }} {% endif %}  </td></tr> 
         {% endfor %}
             </table>
         </div>
