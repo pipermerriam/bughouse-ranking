@@ -130,6 +130,7 @@ PIPELINE_JS = {
     'base': {
         'source_filenames': (
             "js/jquery.js",
+            "js/d3.js",
             "js/bootstrap.js",
             "js/handlebars.js",
             "js/underscore.js",
@@ -138,13 +139,21 @@ PIPELINE_JS = {
             "js/backbone.babysitter.js",
             "js/backbone.marionette.js",
             "js/backbone.marionette.export.js",
-            "js/report-game/config.js",
+            # Report Game App
+            "js/report-game/config.js",  # this is actually global...
             "js/report-game/models.js",
             "js/report-game/collections.js",
             "js/report-game/views.js",
             "js/report-game/layouts.js",
             "js/report-game/app.js",
             "js/report-game/templates/**.handlebars",
+            # Player Rating Visualizations
+            "js/player-rating-visualizations/app.js",
+            "js/player-rating-visualizations/layouts.js",
+            "js/player-rating-visualizations/views.js",
+            "js/player-rating-visualizations/models.js",
+            "js/player-rating-visualizations/collections.js",
+            "js/player-rating-visualizations/templates/**.handlebars",
         ),
         'output_filename': 'base.js',
     },

@@ -4,6 +4,7 @@ from bughouse.models import (
     Player,
     Team,
     Game,
+    PlayerRating,
 )
 
 
@@ -74,3 +75,17 @@ class GameSerializer(serializers.ModelSerializer):
             'losing_color',
             'loss_type',
         )
+
+
+class PlayerRatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlayerRating
+        fields = (
+            'id',
+            'created_at',
+            'updated_at',
+            'player',
+            'game',
+            'rating',
+        )
+        read_only_fields = fields
