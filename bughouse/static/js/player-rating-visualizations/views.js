@@ -13,18 +13,8 @@ $(function(){
         childView: SinglePlayerView
     });
 
-    var GraphView = Backbone.Marionette.View.extend({
-        tagName: "div",
-        svg_el: null,
-        getSVG: function() {
-            if ( _.isNull(this.svg_el) ) {
-                this.svg_el = d3.select(this.el).append('svg');
-            }
-            return this.svg_el;
-        },
-        events: {
-            "click svg": "render"
-        },
+    var PlayerGraphView = Backbone.Marionette.View.extend({
+        tagName: "g",
         render: function() {
             /*
              *  D3!
@@ -36,30 +26,9 @@ $(function(){
                     y: rating.get("rating")
                 };
             })
-            /*
-            var lineData = [{
-                x: 1,
-                y: 5
-                    }, {
-                x: 20,
-                y: 20
-                    }, {
-                x: 40,
-                y: 10
-                    }, {
-                x: 60,
-                y: 40
-                    }, {
-                x: 80,
-                y: 5
-                    }, {
-                x: 100,
-                y: 60
-            }];
-            */
             var width = 900;
             var height = 500;
-            var vis = this.getSVG()
+            var vis = d3.select(this.el).append('g')
                 .attr("width", width)
                 .attr("height", height)
             var margins = {
@@ -119,10 +88,32 @@ $(function(){
                 .attr('stroke', 'blue')
                 .attr('stroke-width', 2)
                 .attr('fill', 'none');
-            $('#graph').append(this.$el);
         }
     });
 
+    var GraphView = Backbone.Marionette.CollectionView.extend({
+        tagName: "svg",
+        childView: PlayerGraphView,
+        _ensureElement: function() {
+            if (!this.el) {
+                var el = document.createElementNS('http://www.w3.org/2000/svg', this.tagName);
+                $(el).attr({
+                    class: "main",
+                    width: 900,
+                    height: 500
+                });
+                this.setElement(el);
+            } else {
+                this.setElement(this.el);
+            }
+        },
+        events: {
+            "click svg": "render"
+        },
+        template: Handlebars.templates.graph,
+    });
+
+    app.PlayerGraphView = PlayerGraphView;
     app.GraphView = GraphView;
     app.PlayersView = PlayersView;
 });

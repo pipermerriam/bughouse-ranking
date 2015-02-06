@@ -9,8 +9,9 @@ $(function(){
         },
         el: "#application",
         regions: {
-            players: '#players',
-            graph: '#graph'
+            players: "#players",
+            arst: "#arst",
+            graph: "#graph"
         },
     });
 
