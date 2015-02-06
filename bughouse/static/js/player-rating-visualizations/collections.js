@@ -4,14 +4,21 @@ $(function(){
     "use-strict";
 
     var Players = Backbone.Collection.extend({
+        model: app.Player,
     });
 
     var PlayerRatings = Backbone.Collection.extend({
+        initialize: function(collection, options) {
+            this.player = options.player;
+        },
         model: app.PlayerRating,
         urlRoot: function() {
-            var player = this.get("player");
+            var player = this.player;
             var playerUrlRoot = player.url();
             return playerUrlRoot + 'ratings/';
+        },
+        url: function() {
+            return this.urlRoot();
         },
         comparator: function(a, b) {
             var date_a = a.getCreatedDate();

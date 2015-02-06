@@ -146,14 +146,14 @@ PIPELINE_JS = {
             "js/report-game/views.js",
             "js/report-game/layouts.js",
             "js/report-game/app.js",
-            "js/report-game/templates/**.handlebars",
             # Player Rating Visualizations
             "js/player-rating-visualizations/app.js",
             "js/player-rating-visualizations/layouts.js",
             "js/player-rating-visualizations/views.js",
             "js/player-rating-visualizations/models.js",
             "js/player-rating-visualizations/collections.js",
-            "js/player-rating-visualizations/templates/**.handlebars",
+            # Templates
+            "js/templates/**.handlebars",
         ),
         'output_filename': 'base.js',
     },

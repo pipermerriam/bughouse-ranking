@@ -5,13 +5,15 @@ $(function(){
 
     var PlayerRatingsVisualizationApp = Backbone.Marionette.Application.extend({
         initialize: function(options) {
-            this.players = new Backbone.Collection(options.players || []);
+            this.players = new app.Players(options.players || []);
         },
         setupLayout: function(game) {
             this.graph_layout = new app.GraphLayout({
                 application: this
             });
-            this.graph_layout.graph.show(new app.GraphView());
+            this.graph_layout.graph.show(new app.GraphView({
+                model: this.players.first()
+            }));
             this.graph_layout.players.show(new app.PlayersView({
                 collection: this.players
             }));
