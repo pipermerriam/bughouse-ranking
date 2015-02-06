@@ -15,6 +15,10 @@ urlpatterns = patterns(
         r'^individual-leaderboard/$', views.IndividualLeaderboard.as_view(),
         name='individual-leaderboard',
     ),
+    url(
+        r'^player-rating-visualizations/$', views.PlayerRatingsVisualization.as_view(),
+        name='player-rating-visualizations',
+    ),
 )
 
 

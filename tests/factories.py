@@ -7,6 +7,7 @@ from bughouse.models import (
 )
 
 
+
 class PlayerFactory(factory.DjangoModelFactory):
     name = factory.Sequence("player-{0}".format)
 

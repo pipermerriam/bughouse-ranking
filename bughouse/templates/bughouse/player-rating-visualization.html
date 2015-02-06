@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load argonauts %}
+
+
+{% block heading %}Player Rating Visualizations{% endblock %}
+
+
+{% block content %}
+<div id="application" class="container">
+    <div id="graph">
+    </div>
+
+    <div id="arst">
+    </div>
+
+    <div id="players">
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block body %}
+{{ block.super }}
+<script>
+$(document).ready(function() {
+    var players = {{ players|json }};
+    window.application = new app.PlayerRatingsVisualizationApp({
+        players: players,
+    });
+    window.application.start();
+});
+</script>
+{% endblock body %}

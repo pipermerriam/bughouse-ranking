@@ -2,12 +2,13 @@ import os
 
 from django.db import models
 from django.db.models import Q
+from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.contrib.staticfiles.storage import staticfiles_storage
 
 
 class Timestamped(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(blank=True, default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
