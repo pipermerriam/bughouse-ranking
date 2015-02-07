@@ -1,3 +1,5 @@
+from sorl.thumbnail import get_thumbnail
+
 from rest_framework import serializers
 
 from bughouse.models import (
@@ -6,6 +8,31 @@ from bughouse.models import (
     Game,
     PlayerRating,
 )
+
+
+class PlayerIconField(serializers.CharField):
+    def __init__(self, *args, **kwargs):
+        kwargs['read_only'] = True
+        self.dimensions = kwargs.pop("dimensions")
+        super(PlayerIconField, self).__init__(*args, **kwargs)
+
+    def to_representation(self, value):
+        im = get_thumbnail(value, self.dimensions, crop='center', quality=99, format="PNG")
+        return im.url
+
+
+class PlayerSerializer(serializers.ModelSerializer):
+    icon_url = PlayerIconField(dimensions="200x200", source="icon")
+    icon = serializers.ImageField(write_only=True)
+
+    class Meta:
+        model = Player
+        fields = (
+            'id',
+            'name',
+            'icon',
+            'icon_url',
+        )
 
 
 class PlayerField(serializers.IntegerField):
@@ -17,18 +44,6 @@ class PlayerField(serializers.IntegerField):
 
     def to_representation(self, value):
         return value.pk
-
-
-class PlayerSerializer(serializers.ModelSerializer):
-    icon_url = serializers.CharField()
-
-    class Meta:
-        model = Player
-        fields = (
-            'id',
-            'name',
-            'icon_url',
-        )
 
 
 class GameSerializer(serializers.ModelSerializer):

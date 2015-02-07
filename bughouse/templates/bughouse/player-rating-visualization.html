@@ -1,5 +1,10 @@
 {% extends "base.html" %}
+{% load pipeline %}
 {% load argonauts %}
+
+{% block extra_scripts %}
+    {% javascript 'player-rating-visualizations' %}
+{% endblock %}
 
 
 {% block heading %}Player Rating Visualizations{% endblock %}

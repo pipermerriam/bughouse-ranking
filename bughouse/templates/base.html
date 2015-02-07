@@ -3,6 +3,8 @@
     <head>
         {% stylesheet 'base' %}
         {% javascript 'base' %}
+        {% block extra_scripts %}
+        {% endblock %}
         <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
         <!-- 16x16 -->
         <link rel="shortcut icon" href="static/images/favicon.ico">
@@ -29,7 +31,7 @@
                 <div class="nav-wrap">
                     <ul class="nav navbar-nav">
                         <li role="presentation"><a href="/">Home</a></li>
-                        <li role="presentation"><a href="{% url 'create-player' %}">New Player</a></li>
+                        <li role="presentation"><a href="{% url 'player-roster' %}">Players</a></li>
                         <li role="presentation"><a href="{% url 'team-leaderboard' %}">Team Leaderboard</a></li>
                         <li role="presentation"><a href="{% url 'individual-leaderboard' %}">Individual Leaderboard</a></li>
                         <li role="presentation"><a href="{% url 'player-rating-visualizations' %}">Visualizations</a></li>
