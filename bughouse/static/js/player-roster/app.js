@@ -12,7 +12,12 @@ $(function(){
             this.roster_layout.roster.show(new app.RosterView({
                 collection: this.players
             }));
-            this.roster_layout.player_form.show(new app.PlayerFormView(new app.Player()));
+            this.roster_layout.player_form.show(new app.PlayerFormView({
+                model: new app.Player()
+            }));
+            var form_view = this.roster_layout.player_form.currentView;
+            var roster_view = this.roster_layout.roster.currentView;
+            roster_view.listenTo(form_view, "model:created", _.bind(roster_view.addNewPlayer, roster_view));
         },
         start: function(options) {
             this.setupLayout();

@@ -1,3 +1,7 @@
+import base64
+
+from django.core.files.base import ContentFile
+
 from sorl.thumbnail import get_thumbnail
 
 from rest_framework import serializers
@@ -21,9 +25,19 @@ class PlayerIconField(serializers.CharField):
         return im.url
 
 
+class B64ImageField(serializers.CharField):
+    def to_internal_value(self, value):
+        return ContentFile(base64.b64decode(value))
+
+    def to_representation(self, value):
+        with value.open('r') as image_file:
+            return base64.b64encode(image_file.read())
+
+
 class PlayerSerializer(serializers.ModelSerializer):
     icon_url = PlayerIconField(dimensions="200x200", source="icon")
-    icon = serializers.ImageField(write_only=True)
+    icon = B64ImageField(write_only=True)
+    icon_filename = serializers.CharField(write_only=True)
 
     class Meta:
         model = Player
@@ -31,8 +45,19 @@ class PlayerSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'icon',
+            'icon_filename',
             'icon_url',
         )
+
+    def save(self, *args, **kwargs):
+        icon_filename = self.validated_data.pop("icon_filename")
+        player = super(PlayerSerializer, self).save(*args, **kwargs)
+        player.icon.save(
+            icon_filename,
+            self.validated_data['icon'],
+            save=True,
+        )
+        return player
 
 
 class PlayerField(serializers.IntegerField):

@@ -2,7 +2,6 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
 from rest_framework import viewsets
-from rest_framework import mixins
 from rest_framework import exceptions
 
 from bughouse.models import (
