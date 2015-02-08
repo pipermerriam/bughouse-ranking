@@ -11,10 +11,18 @@ $(function(){
     var RosterView = Backbone.Marionette.CollectionView.extend({
         tagName: "div",
         template: Handlebars.templates.roster,
-        childView: SinglePlayerView,
-        addNewPlayer: function(player) {
-            this.collection.add(player);
-        }
+        childView: SinglePlayerView
+    });
+
+    var MessageView = Backbone.Marionette.ItemView.extend({
+        tagName: "div",
+        template: Handlebars.templates.message
+    })
+
+    var MessagesView = Backbone.Marionette.CollectionView.extend({
+        tagName: "div",
+        template: Handlebars.templates.messages,
+        childView: MessageView
     });
 
     var PlayerFormView = Backbone.Marionette.ItemView.extend({
@@ -56,12 +64,11 @@ $(function(){
         handleIconSelect: function(event) {
             var files = event.target.files;
             var file = files[0];
-            this.model.set("icon_filename", file.name)
 
             if (files && file) {
+                this.model.set("icon_filename", file.name)
                 var reader = new FileReader();
-                var view = this;
-                var model = this.model;
+
                 reader.onload = _.bind(this.onIconLoad, this);
                 reader.onloadstart = _.bind(this.onIconLoadStart, this);
                 reader.onloadend = _.bind(this.onIconLoadEnd, this);
@@ -77,7 +84,7 @@ $(function(){
             var options = {};
             if ( this.model.isNew() ) {
                 options.success = _.bind(function(){
-                    this.trigger("model:created", this.model);
+                    this.trigger("model:created", this.model, this);
                 }, this);
             }
             this.model.save(data, options);

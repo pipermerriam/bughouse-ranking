@@ -8,19 +8,36 @@ $(function(){
             this.players = new app.Players(options.players || []);
         },
         setupLayout: function(game) {
+            // Layout
             this.roster_layout = new app.RosterLayout();
-            this.roster_layout.roster.show(new app.RosterView({
+            // Views
+            var rosterView = new app.RosterView({
                 collection: this.players
-            }));
-            this.roster_layout.player_form.show(new app.PlayerFormView({
-                model: new app.Player()
-            }));
-            var form_view = this.roster_layout.player_form.currentView;
-            var roster_view = this.roster_layout.roster.currentView;
-            roster_view.listenTo(form_view, "model:created", _.bind(roster_view.addNewPlayer, roster_view));
+            });
+            var formView = this.setupPlayerForm();
+
+            // Put views in layouts
+            this.roster_layout.roster.show(rosterView);
+            this.roster_layout.player_form.show(formView);
+
+            // Listen to the form submitting.
+            this.listenTo(formView, "model:created", _.bind(this.addNewPlayer, this));
+        },
+        setupPlayerForm: function(player) {
+            if ( _.isUndefined(player) ) {
+                player = new app.Player();
+            }
+            var formView = new app.PlayerFormView({
+                model: player
+            });
+            return formView;
         },
         start: function(options) {
             this.setupLayout();
+        },
+        addNewPlayer: function(player) {
+            this.players.add(player);
+            this.roster_layout.player_form.show(this.setupPlayerForm());
         }
     });
 
