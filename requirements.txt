@@ -8,4 +8,3 @@ django-pipeline==1.4.3
 psycopg2==2.5.4
 Pillow==2.7.0
 sorl-thumbnail==12.2
-sorl-thumbnail==12.2
