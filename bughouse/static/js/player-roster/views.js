@@ -111,8 +111,10 @@ $(function(){
             var options = {};
             if ( this.model.isNew() ) {
                 options.success = _.bind(function(){
-                    this.trigger("model:created", this.model, this);
+                    this.trigger("player:created", this.model, this);
                 }, this);
+            } else {
+                this.trigger("player:updated", this.model, this);
             }
             this.model.save(data, options);
             this.trigger("messages:add", {

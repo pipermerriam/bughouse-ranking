@@ -36,8 +36,31 @@ class B64ImageField(serializers.CharField):
 
 class PlayerSerializer(serializers.ModelSerializer):
     icon_url = PlayerIconField(dimensions="200x200", source="icon")
-    icon = B64ImageField(write_only=True)
-    icon_filename = serializers.CharField(write_only=True)
+    icon = B64ImageField(write_only=True, required=False)
+    icon_filename = serializers.CharField(write_only=True, required=False)
+
+    def validate(self, data):
+        icon = data.get('icon')
+        icon_filename = data.get('icon_filename')
+        if bool(icon) is not bool(icon_filename):
+            raise serializers.ValidationError(
+                "`icon` and `icon_filename` are required to update the icon",
+            )
+        return super(PlayerSerializer, self).validate(data)
+
+    def validate_icon(self, value):
+        if not value and self.instance is None:
+            raise serializers.ValidationError(
+                "`icon` is required for player creation"
+            )
+        return value
+
+    def validate_icon_filename(self, value):
+        if not value and self.instance is None:
+            raise serializers.ValidationError(
+                "`icon_filename` is required for player creation"
+            )
+        return value
 
     class Meta:
         model = Player
@@ -50,13 +73,15 @@ class PlayerSerializer(serializers.ModelSerializer):
         )
 
     def save(self, *args, **kwargs):
-        icon_filename = self.validated_data.pop("icon_filename")
+        icon_filename = self.validated_data.pop("icon_filename", None)
+        icon = self.validated_data.pop('icon', None)
         player = super(PlayerSerializer, self).save(*args, **kwargs)
-        player.icon.save(
-            icon_filename,
-            self.validated_data['icon'],
-            save=True,
-        )
+        if icon_filename and icon:
+            player.icon.save(
+                icon_filename,
+                icon,
+                save=True,
+            )
         return player
 
 

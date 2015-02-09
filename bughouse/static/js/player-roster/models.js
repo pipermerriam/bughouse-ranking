@@ -29,14 +29,6 @@ $(function(){
             info: "info",
             warning: "warning",
             danger: "danger",
-        },
-        exportable: [
-            "cssClasses"
-        ],
-        cssClasses: function() {
-            var classes = [];
-            classes.push("bg-" + this.get("level"));
-            return classes.join(" ");
         }
     });
 

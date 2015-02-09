@@ -66,10 +66,8 @@ class Team(Timestamped):
     @property
     def total_games(self):
         return Game.objects.filter(
-            Q(winning_team__white_player=self) |
-            Q(winning_team__black_player=self) |
-            Q(losing_team__white_player=self) |
-            Q(losing_team__black_player=self)
+            Q(winning_team=self) |
+            Q(losing_team=self)
         ).distinct().count()
 
 

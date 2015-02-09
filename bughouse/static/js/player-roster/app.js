@@ -24,7 +24,7 @@ $(function(){
             this.roster_layout.player_form.show(formView);
             this.roster_layout.messages.show(this.messagesView);
 
-            // Listen to the form submitting.
+            // Listen to edit events from the roster.
             this.listenTo(rosterView, "player:edit", _.bind(this.editPlayer, this));
         },
         editPlayer: function(player) {
@@ -41,7 +41,10 @@ $(function(){
             var formView = new app.PlayerFormView({
                 model: player
             });
-            this.listenTo(formView, "model:created", _.bind(this.addNewPlayer, this));
+
+            // Listeners
+            this.listenTo(formView, "player:created", _.bind(this.addNewPlayer, this));
+            this.listenTo(formView, "player:updated", _.bind(this.resetForm, this));
             this.listenTo(formView, "form:cancel", _.bind(this.resetForm, this));
             this.listenTo(formView, "messages:add", _.bind(this.addMessage, this));
             return formView;
