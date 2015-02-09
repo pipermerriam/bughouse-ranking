@@ -16,12 +16,18 @@ $(function(){
 
     var MessageView = Backbone.Marionette.ItemView.extend({
         tagName: "div",
-        template: Handlebars.templates.message
+        template: Handlebars.templates.message,
+        events: {
+            "click button.close": "dismissMessage"
+        },
+        dismissMessage: function(event) {
+            this.model.collection.remove(this.model);
+        },
     })
 
     var MessagesView = Backbone.Marionette.CollectionView.extend({
         tagName: "div",
-        template: Handlebars.templates.messages,
+        //template: Handlebars.templates.messages,
         childView: MessageView
     });
 
@@ -88,11 +94,16 @@ $(function(){
                 }, this);
             }
             this.model.save(data, options);
+            this.trigger("messages:add", {
+                message: "Player saved",
+                level: "success",
+            });
         }
     });
 
     app.RosterView = RosterView;
     app.PlayerFormView = PlayerFormView;
+    app.MessagesView = MessagesView;
 });
 
 

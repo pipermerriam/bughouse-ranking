@@ -8,7 +8,8 @@ $(function(){
         el: "#application",
         regions: {
             roster: "#roster",
-            player_form: "#player-form"
+            player_form: "#player-form",
+            messages: "#messages",
         },
     });
 

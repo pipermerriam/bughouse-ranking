@@ -14,5 +14,5 @@ $(function(){
     });
 
     app.Players = Players;
-
+    app.Messages = Messages;
 });
