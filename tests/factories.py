@@ -7,9 +7,9 @@ from bughouse.models import (
 )
 
 
-
 class PlayerFactory(factory.DjangoModelFactory):
     name = factory.Sequence("player-{0}".format)
+    icon = factory.django.ImageField(from_path="tests/yoav.jpg")
 
     class Meta:
         model = Player

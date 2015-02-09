@@ -1,0 +1,23 @@
+<form id="player-form" action="." method="post">
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input class="form-control" name="name" placeholder="Player Name" value="{{ name }}">
+    </div>
+    {{#if isNew }}
+        <div class="form-group">
+            <label for="icon">Icon</label>
+            <input type="file" name="icon">
+            <p class="help-block">Images should be at least 200x200</p>
+        </div>
+    {{else}}
+        <div>
+            <img src="{{ icon_url }}" class="img-circle">
+        </div>
+    {{/if}}
+        <button class="submit btn btn-lg btn-success">
+            {{#if isNew }}Create{{else}}Save{{/if}}
+        </button>
+    {{#unless isNew }}
+        <button class="cancel btn btn-lg btn-primary">Cancel</button>
+    {{/unless}}
+</form>

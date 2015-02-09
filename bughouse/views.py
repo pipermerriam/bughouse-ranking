@@ -3,7 +3,6 @@ from django.views import generic
 
 from bughouse.models import (
     Player,
-    get_icon_url,
     Game,
     Team,
 )
@@ -40,28 +39,6 @@ class ReportGameView(PlayerDataMixin, generic.TemplateView):
         return serializer.data
 
 
-class CreatePlayerView(generic.CreateView):
-    model = Player
-    template_name = 'bughouse/create-player.html'
-    success_url = '/'
-
-    def get_context_data(self, **kwargs):
-        context = super(CreatePlayerView, self).get_context_data(**kwargs)
-        context['available_icons'] = self.get_available_icons()
-        return context
-
-    def get_available_icons(self):
-        used_icons = set(Player.objects.exclude(
-            icon=Player.DEFAULT_ICON,
-        ).values_list('icon', flat=True))
-        available_icons = tuple((
-            value for value in Player.ICON_CHOICES if value[0] not in used_icons
-        ))
-        return tuple((
-            (v[0], get_icon_url(v[0]), v[1]) for v in available_icons
-        ))
-
-
 class TeamLeaderboard(generic.ListView):
     model = Team
     context_object_name = 'teams'
@@ -84,3 +61,7 @@ class IndividualLeaderboard(generic.ListView):
 
 class PlayerRatingsVisualization(PlayerDataMixin, generic.TemplateView):
     template_name = 'bughouse/player-rating-visualization.html'
+
+
+class PlayerRosterView(PlayerDataMixin, generic.TemplateView):
+    template_name = 'bughouse/player-roster.html'

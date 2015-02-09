@@ -123,7 +123,7 @@ $(function(){
                 bottom: 20
             };
             var xBounds = this.getXBounds(lineData);
-            var xRange = d3.scale.linear()
+            var xRange = d3.time.scale.utc()
                 .range([margins.left, width - margins.right])
                 .domain([xBounds.xMin, xBounds.xMax]);
 
@@ -133,19 +133,27 @@ $(function(){
                 .domain([yBounds.yMin, yBounds.yMax]);
 
             var lineFunc = d3.svg.line()
+                .interpolate("cardinal")
                 .x(function(d) {
                     return xRange(d.x);
                 })
                 .y(function(d) {
                     return yRange(d.y);
-                })
-                .interpolate('linear');
+                });
             var lineColor = this.colors[this.model.id % 20];
             vis.append('svg:path')
                 .attr('d', lineFunc(lineData))
                 .attr('stroke', lineColor)
                 .attr('stroke-width', 2)
                 .attr('fill', 'none');
+            var points = vis.selectAll('.point').data(lineData)
+                .enter()
+                .append("svg:circle")
+                .attr("stroke", "black")
+                .attr("fill", function(d, i) { return "black" })
+                .attr("cx", function(d, i) { return xRange(d.x) })
+                .attr("cy", function(d, i) { return yRange(d.y) })
+                .attr("r", function(d, i) { return 2 });
         }
     });
 
@@ -177,7 +185,7 @@ $(function(){
         template: Handlebars.templates.graph,
         getDefaultMinDate: function() {
             var MONTH_1 = 31 * 24 * 60 * 60 * 1000;
-            return new Date() - MONTH_1;
+            return new Date(new Date() - MONTH_1);
         },
         getSelectedChildren: function() {
             return this.children.filter(function(child) {
@@ -220,7 +228,7 @@ $(function(){
 
 
             var xBounds = this.getXBounds();
-            var xRange = d3.scale.linear()
+            var xRange = d3.time.scale.utc()
                 .range([margins.left, width - margins.right])
                 .domain([xBounds.xMin, xBounds.xMax]);
 

@@ -10,9 +10,11 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 import excavator
 from dj_database_url import config as dj_config
+
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
 # Quick-start development settings - unsuitable for production
@@ -44,6 +46,7 @@ INSTALLED_APPS = (
     'pipeline',
     'argonauts',
     'rest_framework',
+    'sorl.thumbnail',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -139,23 +142,42 @@ PIPELINE_JS = {
             "js/backbone.babysitter.js",
             "js/backbone.marionette.js",
             "js/backbone.marionette.export.js",
-            # Report Game App
-            "js/report-game/config.js",  # this is actually global...
+            # Config
+            "js/config.js",
+            # Templates
+            "js/templates/**.handlebars",
+        ),
+        'output_filename': 'base.js',
+    },
+    'player-roster': {
+        'source_filenames': (
+            "js/player-roster/models.js",
+            "js/player-roster/collections.js",
+            "js/player-roster/views.js",
+            "js/player-roster/layouts.js",
+            "js/player-roster/app.js",
+        ),
+        'output_filename': 'player-roster.js',
+    },
+    'report-game': {
+        'source_filenames': (
             "js/report-game/models.js",
             "js/report-game/collections.js",
             "js/report-game/views.js",
             "js/report-game/layouts.js",
             "js/report-game/app.js",
-            # Player Rating Visualizations
+        ),
+        'output_filename': 'report-game.js',
+    },
+    'player-rating-visualizations': {
+        'source_filenames': (
             "js/player-rating-visualizations/app.js",
             "js/player-rating-visualizations/layouts.js",
             "js/player-rating-visualizations/views.js",
             "js/player-rating-visualizations/models.js",
             "js/player-rating-visualizations/collections.js",
-            # Templates
-            "js/templates/**.handlebars",
         ),
-        'output_filename': 'base.js',
+        'output_filename': 'player-rating-visualizations.js',
     },
 }
 PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.NoopCompressor'
@@ -180,3 +202,6 @@ ELO_PARTNER_WEIGHT = 1.0 / 5
 ELO_SELF_WEIGHT = 1 - ELO_PARTNER_WEIGHT
 ELO_PROVISIONAL_GAME_LIMIT = 10
 ELO_PROVISIONAL_GAME_MODIFIER = 4
+
+# Sorl Thumbnailer
+THUMBNAIL_FORMAT = "PNG"

@@ -2,7 +2,6 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
 from rest_framework import viewsets
-from rest_framework import mixins
 from rest_framework import exceptions
 
 from bughouse.models import (
@@ -13,6 +12,7 @@ from bughouse.models import (
 
 from .serializers import (
     GameSerializer,
+    PlayerSerializer,
     PlayerRatingSerializer,
 )
 
@@ -27,6 +27,11 @@ class GameViewSet(viewsets.ModelViewSet):
         if instance.created_at < ten_minutes_ago:
             raise exceptions.PermissionDenied("Cannot delete games older than 10 minutes")
         return super(GameViewSet, self).delete()
+
+
+class PlayerViewSet(viewsets.ModelViewSet):
+    queryset = Player.objects.all()
+    serializer_class = PlayerSerializer
 
 
 class PlayerRatingsViewSet(viewsets.ReadOnlyModelViewSet):

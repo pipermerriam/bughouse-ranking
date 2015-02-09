@@ -3,33 +3,31 @@
 {% load argonauts %}
 
 {% block extra_scripts %}
-    {% javascript 'report-game' %}
+    {% javascript 'player-roster' %}
 {% endblock %}
-
-
-{% block heading %}Report A Game{% endblock %}
-
 
 {% block content %}
 <div id="application" class="container">
-    <div id="report-game-form">
+    <div id="messages" class="row">
     </div>
-
-    <div id="recent-games">
+    <div class="row">
+        <div id="player-form" class="col-md-6 col-md-offset-3">
+            <!-- PlayerFormView -->
+        </div>
+    </div>
+    <div id="roster" class="row">
+        <!-- RosterView -->
     </div>
 </div>
 {% endblock content %}
-
 
 {% block body %}
 {{ block.super }}
 <script>
 $(document).ready(function() {
     var players = {{ players|json }};
-    var recent_games = {{ recent_games|json }};
-    window.application = new app.ReportGameApp({
+    window.application = new app.PlayerRosterApp({
         players: players,
-        recent_games: recent_games,
     });
     window.application.start();
 });
