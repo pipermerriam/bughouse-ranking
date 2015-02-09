@@ -51,7 +51,8 @@ $(function(){
         template: Handlebars.templates.player_form,
         events: {
             "change input": "formChanged",
-            "click button": "submit"
+            "click button.submit": "submit",
+            "click button.cancel": "cancel"
         },
         ui: {
             submit_button: 'button.submit',
@@ -101,6 +102,9 @@ $(function(){
                 this.set("icon", null);
             }
         },
+        /*
+         *  Form controls
+         */
         submit: function(event) {
             event.preventDefault();
             var data = this.model.toJSON();
@@ -115,6 +119,10 @@ $(function(){
                 message: "Player saved",
                 level: "success",
             });
+        },
+        cancel: function(event) {
+            event.preventDefault();
+            this.trigger("form:cancel");
         }
     });
 
