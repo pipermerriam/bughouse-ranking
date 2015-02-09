@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import os
 
 from django.db import models, migrations
-from django.contrib.staticfiles.storage import staticfiles_storage
+from django.contrib.staticfiles.finders import find
 from django.core.files import File
 
 
@@ -33,13 +33,11 @@ def populate_player_icons(apps, schema_editor):
 
     for player in Player.objects.all():
         static_file_name = "{0}.jpg".format(player.name.lower())
-        static_image_path = os.path.join('images', 'player-icons', static_file_name)
-        if staticfiles_storage.exists(static_image_path):
-            static_file = staticfiles_storage.open(static_image_path, 'r')
+        static_image_path = find(os.path.join('images', 'player-icons', static_file_name))
+        if static_image_path:
+            static_file = open(static_image_path, 'r')
         else:
-            static_file = staticfiles_storage.open(
-                os.path.join('images', 'player-icons', 'default.jpg'), 'r',
-            )
+            static_file = open(find(os.path.join('images', 'player-icons', 'default.jpg')), 'r')
         image_file = File(static_file)
         player.icon.save(static_file_name, image_file, save=True)
 
