@@ -5,13 +5,22 @@ $(function(){
 
     var SinglePlayerView = Backbone.Marionette.ItemView.extend({
         tagName: "div",
-        template: Handlebars.templates.roster_player
+        template: Handlebars.templates.roster_player,
+        events: {
+            "click img": "triggerEdit"
+        },
+        triggerEdit: function(event) {
+            this.trigger("player:edit");
+        }
     });
 
     var RosterView = Backbone.Marionette.CollectionView.extend({
         tagName: "div",
         template: Handlebars.templates.roster,
-        childView: SinglePlayerView
+        childView: SinglePlayerView,
+        onChildviewPlayerEdit: function(childView) {
+            this.trigger("player:edit", childView.model);
+        }
     });
 
     var MessageView = Backbone.Marionette.ItemView.extend({
@@ -54,6 +63,14 @@ $(function(){
             } else if ( el.attr("name") === "icon" ) {
                 this.handleIconSelect(event);
             }
+        },
+        /*
+         *  Template
+         */
+        templateHelpers: function() {
+            return {
+                isNew: this.model.isNew()
+            };
         },
         /*
          *  File upload stuff

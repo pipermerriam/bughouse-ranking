@@ -27,6 +27,11 @@ $(function(){
             // Listen to the form submitting.
             this.listenTo(formView, "model:created", _.bind(this.addNewPlayer, this));
             this.listenTo(formView, "messages:add", _.bind(this.addMessage, this));
+            this.listenTo(rosterView, "player:edit", _.bind(this.editPlayer, this));
+        },
+        editPlayer: function(player) {
+            var editFormView = this.setupPlayerForm(player);
+            this.roster_layout.player_form.show(editFormView);
         },
         setupPlayerForm: function(player) {
             if ( _.isUndefined(player) ) {

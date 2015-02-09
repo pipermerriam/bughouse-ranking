@@ -11,7 +11,7 @@ $(function(){
             } else {
                 return this.urlRoot + this.id + "/";
             }
-        }
+        },
     });
 
     var Message = Backbone.Model.extend({
