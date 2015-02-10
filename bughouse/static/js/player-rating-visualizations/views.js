@@ -133,7 +133,7 @@ $(function(){
                 .domain([yBounds.yMin, yBounds.yMax]);
 
             var lineFunc = d3.svg.line()
-                .interpolate("cardinal")
+                .interpolate("step-before")
                 .x(function(d) {
                     return xRange(d.x);
                 })
