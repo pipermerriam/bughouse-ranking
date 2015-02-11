@@ -10,6 +10,7 @@ $(function(){
             "click img": "triggerEdit"
         },
         triggerEdit: function(event) {
+            event.preventDefault();
             this.trigger("player:edit");
         }
     });
