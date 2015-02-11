@@ -26,9 +26,9 @@ SECRET_KEY = excavator.env_string('DJANGO_SECRET_KEY', required=True)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = excavator.env_bool('DJANGO_DEBUG', required=True)
 
-TEMPLATE_DEBUG = DEBUG
+ALLOWED_HOSTS = excavator.env_list("DJANGO_ALLOWED_HOSTS", required=True)
 
-ALLOWED_HOSTS = []
+TEMPLATE_DEBUG = DEBUG
 
 
 # Application definition
