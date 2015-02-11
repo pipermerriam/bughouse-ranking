@@ -15,18 +15,9 @@ class Timestamped(models.Model):
         ordering = ('-created_at',)
 
 
-INITIAL_RATING = 1000
-
-
-@python_2_unicode_compatible
-class Player(Timestamped):
-    name = models.CharField(max_length=255, unique=True)
-    icon = models.ImageField()
-
-    is_active = models.BooleanField(default=True, blank=True)
-
-    def __str__(self):
-        return self.name
+class Rated(Timestamped):
+    class Meta(Timestamped.Meta):
+        abstract = True
 
     @property
     def latest_rating(self):
@@ -35,6 +26,27 @@ class Player(Timestamped):
             return rating.rating
         else:
             return INITIAL_RATING
+
+    def get_rating_at_datetime(self, when):
+        rating = self.ratings.filter(created_at__lte=when).first()
+        if rating:
+            return rating.rating
+        else:
+            return INITIAL_RATING
+
+
+INITIAL_RATING = 1000
+
+
+@python_2_unicode_compatible
+class Player(Rated):
+    name = models.CharField(max_length=255, unique=True)
+    icon = models.ImageField()
+
+    is_active = models.BooleanField(default=True, blank=True)
+
+    def __str__(self):
+        return self.name
 
     @property
     def total_games(self):
@@ -46,13 +58,13 @@ class Player(Timestamped):
         ).distinct().count()
 
 
-class Team(Timestamped):
+class Team(Rated):
     white_player = models.ForeignKey('Player', related_name='teams_as_white',
                                      on_delete=models.PROTECT)
     black_player = models.ForeignKey('Player', related_name='teams_as_black',
                                      on_delete=models.PROTECT)
 
-    class Meta(Timestamped.Meta):
+    class Meta(Rated.Meta):
         unique_together = (
             ('white_player', 'black_player'),
         )
@@ -60,6 +72,13 @@ class Team(Timestamped):
     @property
     def latest_rating(self):
         rating = self.ratings.first()
+        if rating:
+            return rating.rating
+        else:
+            return INITIAL_RATING
+
+    def get_rating_at_datetime(self, when):
+        rating = self.ratings.filter(created_at__lte=when).first()
         if rating:
             return rating.rating
         else:
@@ -109,15 +128,30 @@ class Game(Timestamped):
                                  blank=True, default=UNKNOWN)
 
 
+OVERALL_OVERALL = 'overall.overall'
+
+
 class TeamRating(Timestamped):
     rating = models.FloatField()
 
+    key = models.CharField(max_length=255)
     game = models.ForeignKey('Game', related_name="team_ratings")
     team = models.ForeignKey('Team', related_name="ratings")
+
+    class Meta(Timestamped.Meta):
+        unique_together = (
+            ('game', 'team', 'key'),
+        )
 
 
 class PlayerRating(Timestamped):
     rating = models.FloatField()
 
+    key = models.CharField(max_length=255)
     game = models.ForeignKey('Game', related_name="player_ratings")
     player = models.ForeignKey('Player', related_name="ratings")
+
+    class Meta(Timestamped.Meta):
+        unique_together = (
+            ('game', 'player', 'key'),
+        )

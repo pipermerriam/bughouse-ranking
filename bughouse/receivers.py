@@ -1,7 +1,10 @@
-from ratings import rate_teams, rate_players
+from django.conf import settings
+from django.utils.module_loading import import_string
 
 
-def compute_game_ratings(sender, instance, created, raw, **kwargs):
+def compute_ratings(sender, instance, created, raw, **kwargs):
     if not raw:
-        rate_teams(instance)
-        rate_players(instance)
+        for backend_path in settings.ELO_RATING_ENGINES:
+            backend_klass = import_string(backend_path)
+            backend = backend_klass()
+            backend.compute_ratings(instance)

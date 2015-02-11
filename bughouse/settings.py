@@ -188,6 +188,12 @@ PIPELINE_TEMPLATE_EXT = '.handlebars'
 PIPELINE_TEMPLATE_FUNC = 'Handlebars.compile'
 PIPELINE_TEMPLATE_NAMESPACE = 'Handlebars.templates'
 
+# Ratings Engines
+ELO_RATING_ENGINES = (
+    'bughouse.ratings.engines.overall.OverallPlayerRatings',
+    'bughouse.ratings.engines.overall.OverallTeamRatings',
+)
+
 # ELO constants
 ELO_K = 4.0
 ELO_WIN_TEAM = 50.0 / ELO_K

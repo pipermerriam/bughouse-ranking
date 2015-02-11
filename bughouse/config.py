@@ -7,7 +7,7 @@ class BughouseConfig(AppConfig):
     name = 'bughouse'
 
     def ready(self):
-        from bughouse.receivers import compute_game_ratings
+        from bughouse.receivers import compute_ratings
         dispatch.receiver(post_save, sender='bughouse.Game')(
-            compute_game_ratings,
+            compute_ratings,
         )
