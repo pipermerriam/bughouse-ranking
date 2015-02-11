@@ -39,6 +39,9 @@ class PlayerSerializer(serializers.ModelSerializer):
     icon = B64ImageField(write_only=True, required=False)
     icon_filename = serializers.CharField(write_only=True, required=False)
 
+    latest_rating = serializers.FloatField(read_only=True)
+    total_games = serializers.IntegerField(read_only=True)
+
     def validate(self, data):
         icon = data.get('icon')
         icon_filename = data.get('icon_filename')
@@ -70,6 +73,9 @@ class PlayerSerializer(serializers.ModelSerializer):
             'icon',
             'icon_filename',
             'icon_url',
+            'is_active',
+            'total_games',
+            'latest_rating',
         )
 
     def save(self, *args, **kwargs):
