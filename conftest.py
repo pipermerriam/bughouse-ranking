@@ -8,6 +8,8 @@ def factories(db):
         PlayerFactory,
         TeamFactory,
         GameFactory,
+        PlayerRatingFactory,
+        TeamRatingFactory,
     )
 
     def is_factory(obj):
@@ -38,7 +40,7 @@ def models(db):
 
 @pytest.fixture()
 def elo_settings(settings):
-    settings.ELO_K = 4.0 
+    settings.ELO_K = 4.0
     settings.ELO_WIN_TEAM = 50 / settings.ELO_K
     settings.ELO_LOSE_TEAM = -  settings.ELO_WIN_TEAM
     settings.ELO_WIN_SELF = 55 / settings.ELO_K

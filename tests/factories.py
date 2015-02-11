@@ -4,6 +4,9 @@ from bughouse.models import (
     Player,
     Team,
     Game,
+    PlayerRating,
+    TeamRating,
+    OVERALL_OVERALL,
 )
 
 
@@ -33,3 +36,41 @@ class GameFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = Game
+
+
+class PlayerRatingFactory(factory.DjangoModelFactory):
+    player = factory.SubFactory(PlayerFactory)
+    game = factory.SubFactory(
+        GameFactory,
+        winning_team=factory.SubFactory(
+            TeamFactory,
+            white_player=factory.SelfAttribute('...player'),
+        ),
+    )
+    key = OVERALL_OVERALL
+
+    @factory.post_generation
+    def rating(self, create, extracted, **kwargs):
+        if extracted is not None:
+            self.rating = extracted
+            self.save()
+
+    class Meta:
+        model = PlayerRating
+        django_get_or_create = ('game', 'player')
+
+
+class TeamRatingFactory(factory.DjangoModelFactory):
+    team = factory.SubFactory(TeamFactory)
+    game = factory.SubFactory(GameFactory, winning_team=factory.SelfAttribute('..team'))
+    key = OVERALL_OVERALL
+
+    @factory.post_generation
+    def rating(self, create, extracted, **kwargs):
+        if extracted is not None:
+            self.rating = extracted
+            self.save()
+
+    class Meta:
+        model = TeamRating
+        django_get_or_create = ('game', 'team')

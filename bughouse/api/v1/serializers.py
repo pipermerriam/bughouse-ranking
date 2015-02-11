@@ -156,6 +156,7 @@ class PlayerRatingSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at',
             'player',
+            'key',
             'game',
             'rating',
         )

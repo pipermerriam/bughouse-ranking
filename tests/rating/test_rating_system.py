@@ -1,4 +1,11 @@
-from bughouse.ratings import (
+import pytest
+
+from bughouse.models import (
+    OVERALL_OVERALL,
+    BLACK,
+    WHITE,
+)
+from bughouse.ratings.engines.overall import (
     rate_teams,
     rate_players,
     provisional_modifier,
@@ -8,8 +15,9 @@ from bughouse.ratings import (
 def test_rate_single_game(factories, models, elo_settings):
     game = factories.GameFactory()
     r1, r2 = rate_teams(game)
-    assert r1.rating == 1052
-    assert r2.rating == 948
+
+    assert r1.rating == 1024
+    assert r2.rating == 976
 
 
 def test_rate_multiple_games(factories, models):
@@ -18,8 +26,8 @@ def test_rate_multiple_games(factories, models):
     rate_teams(factories.GameFactory(winning_team=team_a, losing_team=team_b))
     rate_teams(factories.GameFactory(winning_team=team_a, losing_team=team_b))
 
-    assert team_a.latest_rating == 1120
-    assert team_b.latest_rating == 880
+    assert team_a.latest_rating == 1052
+    assert team_b.latest_rating == 948
 
 
 def test_provisional_limit(factories, models):
@@ -49,21 +57,50 @@ def test_provisional_limit(factories, models):
     assert (team_a.latest_rating + team_b.latest_rating) / 2 == 1000
 
 
-def test_individual_ratings(factories, models):
-    game = factories.GameFactory()
+@pytest.mark.parametrize(
+    'losing_color',
+    (BLACK, WHITE),
+)
+def test_individual_ratings(factories, models, losing_color):
+    game = factories.GameFactory(losing_color=losing_color)
 
     if game.losing_color == game.BLACK:
-        wtw, wtb, ltw, ltb = rate_players(game)
+        wtwr, wtbr, ltwr, ltbr = rate_players(game)
 
-        assert wtw.player.latest_rating == 1052
-        assert wtb.player.latest_rating == 1044
-        assert ltw.player.latest_rating == 956
-        assert ltb.player.latest_rating == 948
+        assert wtwr.player.latest_rating == 1028
+        assert wtbr.player.latest_rating == 1024
+        assert ltwr.player.latest_rating == 976
+        assert ltbr.player.latest_rating == 972
 
     else:
-        wtw, wtb, ltw, ltb = rate_players(game)
+        wtwr, wtbr, ltwr, ltbr = rate_players(game)
 
-        assert wtw.player.latest_rating == 1008
-        assert wtb.player.latest_rating == 1012
-        assert ltw.player.latest_rating == 988
-        assert ltb.player.latest_rating == 992
+        assert wtwr.player.latest_rating == 1024
+        assert wtbr.player.latest_rating == 1028
+        assert ltwr.player.latest_rating == 972
+        assert ltbr.player.latest_rating == 976
+
+
+def test_ratings_computation_is_idempotent(factories, models):
+    """
+    Ensure that going back and re-computing old game ratings is an idempotent
+    process.
+    """
+    team_a = factories.TeamFactory()
+    team_b = factories.TeamFactory()
+
+    factories.GameFactory(winning_team=team_a, losing_team=team_b)
+    game_b = factories.GameFactory(winning_team=team_a, losing_team=team_b)
+    factories.GameFactory(winning_team=team_a, losing_team=team_b)
+
+    first_rating_initial = team_a.ratings.get(
+        game=game_b,
+    ).rating
+
+    rate_teams(game_b)
+
+    first_rating_recomputed = team_a.ratings.get(
+        game=game_b,
+    ).rating
+
+    assert first_rating_initial == first_rating_recomputed
