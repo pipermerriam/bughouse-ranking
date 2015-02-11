@@ -1,7 +1,6 @@
 import pytest
 
 from bughouse.models import (
-    OVERALL_OVERALL,
     BLACK,
     WHITE,
 )
