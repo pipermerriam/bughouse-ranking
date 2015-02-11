@@ -63,6 +63,8 @@ $(function(){
                 this.model.set("name", el.val());
             } else if ( el.attr("name") === "icon" ) {
                 this.handleIconSelect(event);
+            } else if ( el.attr("name") === "isActive" ) {
+                this.model.set("is_active", el.prop("checked"));
             }
         },
         /*
@@ -99,7 +101,8 @@ $(function(){
 
                 reader.readAsBinaryString(file);
             } else {
-                this.set("icon", null);
+                this.unset("icon");
+                this.unset("icon_filename");
             }
         },
         /*

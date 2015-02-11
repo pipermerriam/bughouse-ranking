@@ -33,12 +33,12 @@ $(function(){
             this.game_form_layout.winning_team.show(new app.PlayerSelectView({
                 isWinners: true,
                 model: game,
-                collection: this.players
+                collection: new Backbone.Collection(this.players.where({'is_active': true}))
             }));
             this.game_form_layout.losing_team.show(new app.PlayerSelectView({
                 isWinners: false,
                 model: game,
-                collection: this.players
+                collection: new Backbone.Collection(this.players.where({'is_active': true}))
             }));
         },
         setupLossTypeSelect: function(game) {

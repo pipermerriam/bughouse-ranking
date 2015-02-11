@@ -4,13 +4,16 @@ $(function(){
     "use-strict";
 
     var SinglePlayerView = Backbone.Marionette.ItemView.extend({
+        initialize: function(options) {
+            this.listenTo(this.model, "change:isSelected", this.render);
+        },
         tagName: "div",
         template: Handlebars.templates.single_player,
         events: {
-            "click img": "toggleSelection",
-            "change:isSelected": "render"
+            "click a img": "toggleSelection"
         },
-        toggleSelection: function() {
+        toggleSelection: function(event) {
+            event.preventDefault();
             this.model.set("isSelected", !this.model.get("isSelected"));
         }
     });
