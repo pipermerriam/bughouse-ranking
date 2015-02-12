@@ -150,34 +150,34 @@ PIPELINE_JS = {
     },
     'player-roster': {
         'source_filenames': (
+            "js/player-roster/templates/**.handlebars",
             "js/player-roster/models.js",
             "js/player-roster/collections.js",
             "js/player-roster/views.js",
             "js/player-roster/layouts.js",
             "js/player-roster/app.js",
-            "js/player-roster/templates/**.handlebars",
         ),
         'output_filename': 'js/player-roster.js',
     },
     'report-game': {
         'source_filenames': (
+            "js/report-game/templates/**.handlebars",
             "js/report-game/models.js",
             "js/report-game/collections.js",
             "js/report-game/views.js",
             "js/report-game/layouts.js",
             "js/report-game/app.js",
-            "js/report-game/templates/**.handlebars",
         ),
         'output_filename': 'js/report-game.js',
     },
     'player-rating-visualizations': {
         'source_filenames': (
+            "js/player-rating-visualizations/templates/**.handlebars",
             "js/player-rating-visualizations/app.js",
             "js/player-rating-visualizations/layouts.js",
             "js/player-rating-visualizations/views.js",
             "js/player-rating-visualizations/models.js",
             "js/player-rating-visualizations/collections.js",
-            "js/player-rating-visualizations/templates/**.handlebars",
         ),
         'output_filename': 'js/player-rating-visualizations.js',
     },
