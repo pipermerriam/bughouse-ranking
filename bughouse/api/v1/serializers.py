@@ -160,4 +160,3 @@ class PlayerRatingSerializer(serializers.ModelSerializer):
             'game',
             'rating',
         )
-        read_only_fields = fields
