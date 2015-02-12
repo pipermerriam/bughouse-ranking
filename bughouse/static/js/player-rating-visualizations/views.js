@@ -50,6 +50,7 @@ $(function(){
             // Listen for when a player's ratings have been fetched.
             this.listenTo(this.model, "ratings:fetched", _.bind(this.render, this));
             this.listenTo(this.model, "change:isSelected", _.bind(this.render, this));
+            this.listenTo(this.model, "change:dataKey", _.bind(this.render, this));
         },
         tagName: "g",
         _ensureElement: function() {
@@ -66,10 +67,9 @@ $(function(){
             }
         },
         render: function() {
+            this.clearRendering();
             if ( this.model.get("isSelected") ) {
                 this.renderRatings();
-            } else {
-                this.clearRendering();
             }
             this.trigger("render");
         },
@@ -81,14 +81,17 @@ $(function(){
              *  Return an array of data points for graphing.
              */
             if ( _.isUndefined(this.model.get("ratings")) ) {
+                console.log("EMPTY");
                 return [];
             } else {
-                return this.model.get("ratings").collect(function(rating) {
-                    return {
-                        x: rating.getCreatedDate(),
-                        y: rating.get("rating")
-                    };
-                });
+                return _.collect(this.model.get("ratings")
+                    .where({key: this.model.get("dataKey")}),
+                    function(rating) {
+                        return {
+                            x: rating.getCreatedDate(),
+                            y: rating.get("rating")
+                        };
+                    });
             }
         },
         getXBounds: function(lineData) {
@@ -185,7 +188,6 @@ $(function(){
                 this.setElement(this.el);
             }
         },
-        template: Handlebars.templates.graph,
         getDefaultMinDate: function() {
             var MONTH_1 = 31 * 24 * 60 * 60 * 1000;
             return new Date(new Date() - MONTH_1);
@@ -260,11 +262,39 @@ $(function(){
         },
         onRender: function() {
             this.renderAxis();
+        },
+        keyChanged: function(model, dataKey) {
+            this.children.each(function(childView) {
+                childView.model.set("dataKey", dataKey);
+            });
+        }
+    });
+
+    var ControlsView = Backbone.Marionette.ItemView.extend({
+        initialize: function(options) {
+            this.listenTo(this.model, "change:dataKey", this.render);
+        },
+        template: Handlebars.templates.controls,
+        events: {
+            "click button": "triggerKeyChange",
+        },
+        triggerKeyChange: function(event) {
+            event.preventDefault();
+            var el = $(event.currentTarget);
+            this.model.set("dataKey", el.val());
+        },
+        templateHelpers: function() {
+            return {
+                isOverallSelected: this.model.get("dataKey") === "overall:overall",
+                isWhiteSelected: this.model.get("dataKey") === "overall:white",
+                isBlackSelected: this.model.get("dataKey") === "overall:black"
+            }
         }
     });
 
     app.PlayerGraphView = PlayerGraphView;
     app.GraphView = GraphView;
     app.PlayersView = PlayersView;
+    app.ControlsView = ControlsView;
 });
 

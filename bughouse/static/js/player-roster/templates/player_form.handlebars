@@ -2,7 +2,7 @@
     {{#unless isNew }}
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3>{{ name }} <span class="badge">{{ latest_rating }}</span></h3>
+            <h3>{{ name }} <span class="badge"><span class="glyphicon glyphicon-king rating-overall"> {{ rating_overall }}</span></h3>
         </div>
         <div class="panel-body">
             <div class="media-left">
@@ -12,6 +12,9 @@
             </div>
             <div class="media-right">
                 <p>Sure would be nice if I had something to put here....</p>
+                <p>Overall Rating - <span class="badge"><span class="glyphicon glyphicon-king rating-overall"></span> {{ rating_overall }}</span></p>
+                <p>Rating as White - <span class="badge"><span class="glyphicon glyphicon-pawn rating-white"></span> {{ rating_white }}</span></p>
+                <p>Rating as Black - <span class="badge"><span class="glyphicon glyphicon-pawn rating-black"></span> {{ rating_black }}</span></p>
             </div>
         </div>
         <div class="panel-footer">

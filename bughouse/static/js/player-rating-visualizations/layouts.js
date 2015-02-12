@@ -10,7 +10,8 @@ $(function(){
         el: "#application",
         regions: {
             players: "#players",
-            graph: "#graph"
+            graph: "#graph",
+            controls: "#controls"
         },
     });
 
