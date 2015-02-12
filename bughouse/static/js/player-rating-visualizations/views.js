@@ -83,12 +83,14 @@ $(function(){
             if ( _.isUndefined(this.model.get("ratings")) ) {
                 return [];
             } else {
-                return this.model.get("ratings").collect(function(rating) {
-                    return {
-                        x: rating.getCreatedDate(),
-                        y: rating.get("rating")
-                    };
-                });
+                return _.collect(this.model.get("ratings")
+                    .where({key: "overall:overall"}),
+                    function(rating) {
+                        return {
+                            x: rating.getCreatedDate(),
+                            y: rating.get("rating")
+                        };
+                    });
             }
         },
         getXBounds: function(lineData) {
