@@ -97,8 +97,8 @@ STATIC_ROOT = os.path.abspath(
 )
 
 STATICFILES_FINDERS = (
-    'pipeline.finders.FileSystemFinder',
-    'pipeline.finders.AppDirectoriesFinder',
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'pipeline.finders.CachedFileFinder',
     'pipeline.finders.PipelineFinder',
 )
@@ -126,7 +126,7 @@ PIPELINE_CSS = {
             "css/bootstrap-theme.css",
             "css/custom.css",
         ),
-        'output_filename': 'base.css',
+        'output_filename': 'css/base.css',
     },
 }
 
@@ -146,7 +146,7 @@ PIPELINE_JS = {
             # Config
             "js/config.js",
         ),
-        'output_filename': 'base.js',
+        'output_filename': 'js/base.js',
     },
     'player-roster': {
         'source_filenames': (
@@ -157,7 +157,7 @@ PIPELINE_JS = {
             "js/player-roster/app.js",
             "js/player-roster/templates/**.handlebars",
         ),
-        'output_filename': 'player-roster.js',
+        'output_filename': 'js/player-roster.js',
     },
     'report-game': {
         'source_filenames': (
@@ -168,7 +168,7 @@ PIPELINE_JS = {
             "js/report-game/app.js",
             "js/report-game/templates/**.handlebars",
         ),
-        'output_filename': 'report-game.js',
+        'output_filename': 'js/report-game.js',
     },
     'player-rating-visualizations': {
         'source_filenames': (
@@ -179,7 +179,7 @@ PIPELINE_JS = {
             "js/player-rating-visualizations/collections.js",
             "js/player-rating-visualizations/templates/**.handlebars",
         ),
-        'output_filename': 'player-rating-visualizations.js',
+        'output_filename': 'js/player-rating-visualizations.js',
     },
 }
 PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.NoopCompressor'
