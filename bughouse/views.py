@@ -47,7 +47,14 @@ class TeamLeaderboard(generic.ListView):
 
     def get_queryset(self):
         qs = super(TeamLeaderboard, self).get_queryset()
-        return sorted(qs, key=lambda team: team.get_latest_rating(OVERALL_OVERALL), reverse=True)
+        leaders = sorted(
+            qs,
+            key=lambda team: team.get_latest_rating(OVERALL_OVERALL),
+            reverse=True,
+        )
+        for leader in leaders:
+            leader.latest_rating = leader.get_latest_rating(OVERALL_OVERALL)
+        return leaders
 
 
 class IndividualLeaderboard(generic.ListView):
@@ -57,7 +64,14 @@ class IndividualLeaderboard(generic.ListView):
 
     def get_queryset(self):
         qs = super(IndividualLeaderboard, self).get_queryset()
-        return sorted(qs, key=lambda player: player.get_latest_rating(OVERALL_OVERALL), reverse=True)
+        leaders = sorted(
+            qs,
+            key=lambda player: player.get_latest_rating(OVERALL_OVERALL),
+            reverse=True,
+        )
+        for leader in leaders:
+            leader.latest_rating = leader.get_latest_rating(OVERALL_OVERALL)
+        return leaders
 
 
 class PlayerRatingsVisualization(PlayerDataMixin, generic.TemplateView):
