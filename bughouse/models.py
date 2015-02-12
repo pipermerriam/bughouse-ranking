@@ -27,7 +27,7 @@ class Rated(Timestamped):
             return INITIAL_RATING
 
     def get_rating_at_datetime(self, when, key):
-        rating = self.ratings.filter(created_at__lte=when, key=key).first()
+        rating = self.ratings.filter(created_at__lt=when, key=key).first()
         if rating:
             return rating.rating
         else:

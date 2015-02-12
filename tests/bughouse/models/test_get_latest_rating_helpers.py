@@ -31,7 +31,7 @@ def test_player_get_rating_at_datetime(factories):
     # sanity check
     assert first.created_at < middle.created_at < last.created_at
 
-    assert player.get_rating_at_datetime(middle.created_at, key=middle.key) == 2000
+    assert player.get_rating_at_datetime(middle.created_at, key=middle.key) == 900
 
 
 def test_team_get_rating_at_datetime(factories):
@@ -44,7 +44,7 @@ def test_team_get_rating_at_datetime(factories):
     # sanity check
     assert first.created_at < middle.created_at < last.created_at
 
-    assert team.get_rating_at_datetime(middle.created_at, key=middle.key) == 2000
+    assert team.get_rating_at_datetime(middle.created_at, key=middle.key) == 900
 
 
 def test_player_get_rating_at_datetime_with_specified_key(factories):
@@ -66,5 +66,5 @@ def test_player_get_rating_at_datetime_with_specified_key(factories):
         middle_b.created_at < last_a.created_at < last_b.created_at
     )
 
-    assert player.get_rating_at_datetime(middle_a.created_at, key=middle_a.key) == 1000
-    assert player.get_rating_at_datetime(middle_b.created_at, key=middle_b.key) == 1100
+    assert player.get_rating_at_datetime(middle_a.created_at, key=middle_a.key) == 800
+    assert player.get_rating_at_datetime(middle_b.created_at, key=middle_b.key) == 900
