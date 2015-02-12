@@ -61,7 +61,10 @@ def test_player_get_rating_at_datetime_with_specified_key(factories):
     last_b = factories.PlayerRatingFactory(player=player, rating=1300, key=key_b)
 
     # sanity check
-    assert first_a.created_at < first_b.created_at < middle_a.created_at < middle_b.created_at < last_a.created_at < last_b.created_at
+    assert (
+        first_a.created_at < first_b.created_at < middle_a.created_at <
+        middle_b.created_at < last_a.created_at < last_b.created_at
+    )
 
     assert player.get_rating_at_datetime(middle_a.created_at, key=middle_a.key) == 1000
     assert player.get_rating_at_datetime(middle_b.created_at, key=middle_b.key) == 1100
