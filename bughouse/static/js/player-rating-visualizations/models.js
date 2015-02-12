@@ -6,7 +6,7 @@ $(function(){
     var Player = Backbone.Model.extend({
         defaults: {
             isSelected: false,
-            dataKey: "overall.overall"
+            dataKey: "overall:overall"
         },
         initialize: function(options) {
             if ( _.isUndefined(options.ratings) ) {

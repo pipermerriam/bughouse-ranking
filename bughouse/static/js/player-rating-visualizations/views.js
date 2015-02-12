@@ -285,9 +285,9 @@ $(function(){
         },
         templateHelpers: function() {
             return {
-                isOverallSelected: this.model.get("dataKey") === "overall.overall",
-                isWhiteSelected: this.model.get("dataKey") === "overall.white",
-                isBlackSelected: this.model.get("dataKey") === "overall.black"
+                isOverallSelected: this.model.get("dataKey") === "overall:overall",
+                isWhiteSelected: this.model.get("dataKey") === "overall:white",
+                isBlackSelected: this.model.get("dataKey") === "overall:black"
             }
         }
     });

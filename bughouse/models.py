@@ -112,9 +112,9 @@ class Game(Timestamped):
                                  blank=True, default=UNKNOWN)
 
 
-OVERALL_OVERALL = 'overall.overall'
-OVERALL_WHITE = 'overall.white'
-OVERALL_BLACK = 'overall.black'
+OVERALL_OVERALL = 'overall:overall'
+OVERALL_WHITE = 'overall:white'
+OVERALL_BLACK = 'overall:black'
 
 
 class TeamRating(Timestamped):
@@ -129,6 +129,11 @@ class TeamRating(Timestamped):
             ('game', 'team', 'key'),
         )
 
+    def save(self, *args, **kwargs):
+        if self.game:
+            self.created_at = self.game.created_at
+        super(TeamRating, self).save(*args, **kwargs)
+
 
 @python_2_unicode_compatible
 class PlayerRating(Timestamped):
@@ -142,6 +147,11 @@ class PlayerRating(Timestamped):
         unique_together = (
             ('game', 'player', 'key'),
         )
+
+    def save(self, *args, **kwargs):
+        if self.game:
+            self.created_at = self.game.created_at
+        super(PlayerRating, self).save(*args, **kwargs)
 
     def __str__(self):
         return "{s.player} - {s.key} - {s.rating}".format(s=self)

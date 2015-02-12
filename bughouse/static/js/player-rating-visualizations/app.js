@@ -21,7 +21,7 @@ $(function(){
             this.graph_layout.graph.show(graphView);
 
             var controlsView = new app.ControlsView({
-                model: new Backbone.Model({dataKey: "overall.overall"})
+                model: new Backbone.Model({dataKey: "overall:overall"})
             });
             this.graph_layout.controls.show(controlsView);
 
