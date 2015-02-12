@@ -2,6 +2,7 @@ from django.utils import timezone
 from django.views import generic
 
 from bughouse.models import (
+    OVERALL_OVERALL,
     Player,
     Game,
     Team,
@@ -46,7 +47,7 @@ class TeamLeaderboard(generic.ListView):
 
     def get_queryset(self):
         qs = super(TeamLeaderboard, self).get_queryset()
-        return sorted(qs, key=lambda team: team.latest_rating, reverse=True)
+        return sorted(qs, key=lambda team: team.get_latest_rating(OVERALL_OVERALL), reverse=True)
 
 
 class IndividualLeaderboard(generic.ListView):
@@ -56,7 +57,7 @@ class IndividualLeaderboard(generic.ListView):
 
     def get_queryset(self):
         qs = super(IndividualLeaderboard, self).get_queryset()
-        return sorted(qs, key=lambda player: player.latest_rating, reverse=True)
+        return sorted(qs, key=lambda player: player.get_latest_rating(OVERALL_OVERALL), reverse=True)
 
 
 class PlayerRatingsVisualization(PlayerDataMixin, generic.TemplateView):
