@@ -27,8 +27,15 @@ class Rated(Timestamped):
         else:
             return INITIAL_RATING
 
-    def get_rating_at_datetime(self, when):
-        rating = self.ratings.filter(created_at__lte=when).first()
+    def get_latest_rating(self, key):
+        rating = self.ratings.filter(key=key).first()
+        if rating:
+            return rating.rating
+        else:
+            return INITIAL_RATING
+
+    def get_rating_at_datetime(self, when, key):
+        rating = self.ratings.filter(created_at__lte=when, key=key).first()
         if rating:
             return rating.rating
         else:
@@ -68,21 +75,6 @@ class Team(Rated):
         unique_together = (
             ('white_player', 'black_player'),
         )
-
-    @property
-    def latest_rating(self):
-        rating = self.ratings.first()
-        if rating:
-            return rating.rating
-        else:
-            return INITIAL_RATING
-
-    def get_rating_at_datetime(self, when):
-        rating = self.ratings.filter(created_at__lte=when).first()
-        if rating:
-            return rating.rating
-        else:
-            return INITIAL_RATING
 
     @property
     def total_games(self):
@@ -129,6 +121,8 @@ class Game(Timestamped):
 
 
 OVERALL_OVERALL = 'overall.overall'
+OVERALL_WHITE = 'overall.white'
+OVERALL_BLACK = 'overall.black'
 
 
 class TeamRating(Timestamped):
@@ -144,6 +138,7 @@ class TeamRating(Timestamped):
         )
 
 
+@python_2_unicode_compatible
 class PlayerRating(Timestamped):
     rating = models.FloatField()
 
@@ -155,3 +150,6 @@ class PlayerRating(Timestamped):
         unique_together = (
             ('game', 'player', 'key'),
         )
+
+    def __str__(self):
+        return "{s.player} - {s.key} - {s.rating}".format(s=self)

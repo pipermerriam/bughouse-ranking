@@ -191,6 +191,8 @@ PIPELINE_TEMPLATE_NAMESPACE = 'Handlebars.templates'
 # Ratings Engines
 ELO_RATING_ENGINES = (
     'bughouse.ratings.engines.overall.OverallPlayerRatings',
+    'bughouse.ratings.engines.overall.OverallPlayerRatingsAsWhite',
+    'bughouse.ratings.engines.overall.OverallPlayerRatingsAsBlack',
     'bughouse.ratings.engines.overall.OverallTeamRatings',
 )
 

@@ -5,7 +5,11 @@ from django.conf import settings
 from bughouse.ratings.engines.base import BaseRatingsEngine
 
 from bughouse.models import (
+    WHITE,
+    BLACK,
     OVERALL_OVERALL,
+    OVERALL_WHITE,
+    OVERALL_BLACK,
 )
 from bughouse.ratings.utils import (
     win_probability_from_rating,
@@ -19,19 +23,19 @@ def rate_teams(game):
     wt = game.winning_team
     lt = game.losing_team
 
-    wtlr = wt.get_rating_at_datetime(game.created_at)
-    ltlr = lt.get_rating_at_datetime(game.created_at)
+    wtlr = wt.get_rating_at_datetime(game.created_at, key=OVERALL_OVERALL)
+    ltlr = lt.get_rating_at_datetime(game.created_at, key=OVERALL_OVERALL)
 
-    team_ratings = compute_team_ratings(wtlr, ltlr)
+    wtp, ltp = compute_team_ratings(wtlr, ltlr)
 
-    new_wtr = wtlr + (team_ratings[0] * provisional_modifier(wt))
+    new_wtr = wtlr + (wtp * provisional_modifier(wt))
     wtr, _ = game.team_ratings.update_or_create(
-        team=wt, defaults={'rating': new_wtr}
+        team=wt, key=OVERALL_OVERALL, defaults={'rating': new_wtr}
     )
 
-    new_ltr = ltlr + (team_ratings[1] * provisional_modifier(lt))
+    new_ltr = ltlr + (ltp * provisional_modifier(lt))
     ltr, _ = game.team_ratings.update_or_create(
-        team=lt, defaults={'rating': new_ltr}
+        team=lt, key=OVERALL_OVERALL, defaults={'rating': new_ltr}
     )
 
     return wtr, ltr
@@ -51,12 +55,10 @@ def provisional_modifier(player_or_team):
         return 1
 
 
-def _rate_players(game, winner, winner_partner, loser, loser_partner):
-    w_lr = winner.get_rating_at_datetime(game.created_at)
-    wp_lr = winner_partner.get_rating_at_datetime(game.created_at)
-    l_lr = loser.get_rating_at_datetime(game.created_at)
-    lp_lr = loser_partner.get_rating_at_datetime(game.created_at)
-
+def compute_points_for_matchup(w_lr, wp_lr, l_lr, lp_lr):
+    """
+    This is a helper method.
+    """
     wp, wpp, lp, lpp = compute_individual_ratings(
         winner=w_lr,
         winner_partner=wp_lr,
@@ -64,24 +66,7 @@ def _rate_players(game, winner, winner_partner, loser, loser_partner):
         loser_partner=lp_lr,
     )
 
-    new_wr = w_lr + (wp * provisional_modifier(winner))
-    wr, _ = game.player_ratings.update_or_create(
-        player=winner, key=OVERALL_OVERALL, defaults={'rating': new_wr}
-    )
-    new_wpr = wp_lr + (wpp * provisional_modifier(winner_partner))
-    wpr, _ = game.player_ratings.update_or_create(
-        player=winner_partner, key=OVERALL_OVERALL, defaults={'rating': new_wpr}
-    )
-    new_lr = l_lr + (lp * provisional_modifier(loser))
-    lr, _ = game.player_ratings.update_or_create(
-        player=loser, key=OVERALL_OVERALL, defaults={'rating': new_lr}
-    )
-    new_lpr = lp_lr + (lpp * provisional_modifier(loser_partner))
-    lpr, _ = game.player_ratings.update_or_create(
-        player=loser_partner, key=OVERALL_OVERALL, defaults={'rating': new_lpr}
-    )
-
-    return wr, wpr, lr, lpr
+    return wp, wpp, lp, lpp
 
 
 def rate_players(game):
@@ -94,18 +79,88 @@ def rate_players(game):
     ltb = game.losing_team.black_player
     lc = game.losing_color
 
+    wtw_lr = wtw.get_rating_at_datetime(game.created_at, key=OVERALL_OVERALL)
+    wtb_lr = wtb.get_rating_at_datetime(game.created_at, key=OVERALL_OVERALL)
+    ltw_lr = ltw.get_rating_at_datetime(game.created_at, key=OVERALL_OVERALL)
+    ltb_lr = ltb.get_rating_at_datetime(game.created_at, key=OVERALL_OVERALL)
+
     if lc == game.BLACK:
-        wtwr, wtbr, ltbr, ltwr = _rate_players(
-            game,
-            wtw, wtb, ltb, ltw,
+        wtwp, wtbp, ltbp, ltwp = compute_points_for_matchup(
+            wtw_lr, wtb_lr, ltb_lr, ltw_lr,
         )
     else:
-        wtbr, wtwr, ltwr, ltbr = _rate_players(
-            game,
-            wtb, wtw, ltw, ltb,
+        wtbp, wtwp, ltwp, ltbp = compute_points_for_matchup(
+            wtb_lr, wtw_lr, ltw_lr, ltb_lr,
         )
 
+    new_wtwr = wtw_lr + (wtwp * provisional_modifier(wtw))
+    wtwr, _ = game.player_ratings.update_or_create(
+        player=wtw, key=OVERALL_OVERALL, defaults={'rating': new_wtwr}
+    )
+    new_wtbr = wtb_lr + (wtbp * provisional_modifier(wtb))
+    wtbr, _ = game.player_ratings.update_or_create(
+        player=wtb, key=OVERALL_OVERALL, defaults={'rating': new_wtbr}
+    )
+    new_ltwr = ltw_lr + (ltwp * provisional_modifier(ltw))
+    ltwr, _ = game.player_ratings.update_or_create(
+        player=ltw, key=OVERALL_OVERALL, defaults={'rating': new_ltwr}
+    )
+    new_ltbr = ltb_lr + (ltbp * provisional_modifier(ltb))
+    ltbr, _ = game.player_ratings.update_or_create(
+        player=ltb, key=OVERALL_OVERALL, defaults={'rating': new_ltbr}
+    )
+
     return wtwr, wtbr, ltwr, ltbr
+
+
+def rate_players_as_color(game, color):
+    wtw = game.winning_team.white_player
+    wtb = game.winning_team.black_player
+    ltw = game.losing_team.white_player
+    ltb = game.losing_team.black_player
+    lc = game.losing_color
+
+    if color == WHITE:
+        key = OVERALL_WHITE
+    elif color == BLACK:
+        key = OVERALL_BLACK
+
+    wtw_lr = wtw.get_rating_at_datetime(game.created_at, key=key)
+    wtb_lr = wtb.get_rating_at_datetime(game.created_at, key=key)
+    ltw_lr = ltw.get_rating_at_datetime(game.created_at, key=key)
+    ltb_lr = ltb.get_rating_at_datetime(game.created_at, key=key)
+
+    if lc == BLACK:
+        wtwp, wtbp, ltbp, ltwp = compute_points_for_matchup(
+            wtw_lr, wtb_lr, ltb_lr, ltw_lr,
+        )
+    else:
+        wtbp, wtwp, ltwp, ltbp = compute_points_for_matchup(
+            wtb_lr, wtw_lr, ltw_lr, ltb_lr,
+        )
+
+    if color == WHITE:
+        new_wtwr = wtw_lr + (wtwp * provisional_modifier(wtw))
+        wtwr, _ = game.player_ratings.update_or_create(
+            player=wtw, key=OVERALL_WHITE, defaults={'rating': new_wtwr}
+        )
+        new_ltwr = ltw_lr + (ltwp * provisional_modifier(ltw))
+        ltwr, _ = game.player_ratings.update_or_create(
+            player=ltw, key=OVERALL_WHITE, defaults={'rating': new_ltwr}
+        )
+        return wtwr, ltwr
+    elif color == BLACK:
+        new_wtbr = wtb_lr + (wtbp * provisional_modifier(wtb))
+        wtbr, _ = game.player_ratings.update_or_create(
+            player=wtb, key=OVERALL_BLACK, defaults={'rating': new_wtbr}
+        )
+        new_ltbr = ltb_lr + (ltbp * provisional_modifier(ltb))
+        ltbr, _ = game.player_ratings.update_or_create(
+            player=ltb, key=OVERALL_BLACK, defaults={'rating': new_ltbr}
+        )
+        return wtbr, ltbr
+    else:
+        raise ValueError("Unknown Color")
 
 
 def weighted_rating(self_rating, partner_rating, self_weight=None, partner_weight=None):
@@ -164,6 +219,16 @@ def compute_team_ratings(r_winning_team, r_losing_team):
 class OverallPlayerRatings(BaseRatingsEngine):
     def compute_ratings(self, game):
         rate_players(game)
+
+
+class OverallPlayerRatingsAsWhite(BaseRatingsEngine):
+    def compute_ratings(self, game):
+        rate_players_as_color(game, color=WHITE)
+
+
+class OverallPlayerRatingsAsBlack(BaseRatingsEngine):
+    def compute_ratings(self, game):
+        rate_players_as_color(game, color=BLACK)
 
 
 class OverallTeamRatings(BaseRatingsEngine):
