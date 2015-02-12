@@ -145,8 +145,6 @@ PIPELINE_JS = {
             "js/backbone.marionette.export.js",
             # Config
             "js/config.js",
-            # Templates
-            "js/templates/**.handlebars",
         ),
         'output_filename': 'base.js',
     },
@@ -157,6 +155,7 @@ PIPELINE_JS = {
             "js/player-roster/views.js",
             "js/player-roster/layouts.js",
             "js/player-roster/app.js",
+            "js/player-roster/templates/**.handlebars",
         ),
         'output_filename': 'player-roster.js',
     },
@@ -167,6 +166,7 @@ PIPELINE_JS = {
             "js/report-game/views.js",
             "js/report-game/layouts.js",
             "js/report-game/app.js",
+            "js/report-game/templates/**.handlebars",
         ),
         'output_filename': 'report-game.js',
     },
@@ -177,6 +177,7 @@ PIPELINE_JS = {
             "js/player-rating-visualizations/views.js",
             "js/player-rating-visualizations/models.js",
             "js/player-rating-visualizations/collections.js",
+            "js/player-rating-visualizations/templates/**.handlebars",
         ),
         'output_filename': 'player-rating-visualizations.js',
     },

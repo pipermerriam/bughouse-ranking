@@ -138,3 +138,10 @@ a:visited {
     #losing-team-color .player-container, #winning-team-color .player-container {width: 100%;}
 }
 
+.rating-white {
+    color: white;
+}
+
+.rating-black {
+    color: black;
+}

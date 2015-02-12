@@ -7,6 +7,9 @@ from sorl.thumbnail import get_thumbnail
 from rest_framework import serializers
 
 from bughouse.models import (
+    OVERALL_OVERALL,
+    OVERALL_WHITE,
+    OVERALL_BLACK,
     Player,
     Team,
     Game,
@@ -34,13 +37,25 @@ class B64ImageField(serializers.CharField):
             return base64.b64encode(image_file.read())
 
 
+class LatestRatingField(serializers.Field):
+    def __init__(self, key=None, **kwargs):
+        self.key = key
+        kwargs['source'] = '*'
+        kwargs['read_only'] = True
+        super(LatestRatingField, self).__init__(**kwargs)
+
+    def to_representation(self, instance):
+        return instance.get_latest_rating(self.key)
+
+
 class PlayerSerializer(serializers.ModelSerializer):
     icon_url = PlayerIconField(dimensions="200x200", source="icon")
     icon = B64ImageField(write_only=True, required=False)
     icon_filename = serializers.CharField(write_only=True, required=False)
 
-    latest_rating = serializers.FloatField(read_only=True)
-    total_games = serializers.IntegerField(read_only=True)
+    rating_white = LatestRatingField(key=OVERALL_WHITE)
+    rating_black = LatestRatingField(key=OVERALL_BLACK)
+    rating_overall = LatestRatingField(key=OVERALL_OVERALL)
 
     def validate(self, data):
         icon = data.get('icon')
@@ -75,7 +90,9 @@ class PlayerSerializer(serializers.ModelSerializer):
             'icon_url',
             'is_active',
             'total_games',
-            'latest_rating',
+            'rating_overall',
+            'rating_white',
+            'rating_black',
         )
 
     def save(self, *args, **kwargs):

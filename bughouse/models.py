@@ -19,14 +19,6 @@ class Rated(Timestamped):
     class Meta(Timestamped.Meta):
         abstract = True
 
-    @property
-    def latest_rating(self):
-        rating = self.ratings.first()
-        if rating:
-            return rating.rating
-        else:
-            return INITIAL_RATING
-
     def get_latest_rating(self, key):
         rating = self.ratings.filter(key=key).first()
         if rating:

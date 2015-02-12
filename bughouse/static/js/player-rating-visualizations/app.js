@@ -14,9 +14,18 @@ $(function(){
             this.graph_layout.players.show(new app.PlayersView({
                 collection: this.players
             }));
-            this.graph_layout.graph.show(new app.GraphView({
+
+            var graphView = new app.GraphView({
                 collection: this.players
-            }));
+            });
+            this.graph_layout.graph.show(graphView);
+
+            var controlsView = new app.ControlsView({
+                model: new Backbone.Model({dataKey: "overall.overall"})
+            });
+            this.graph_layout.controls.show(controlsView);
+
+            graphView.listenTo(controlsView.model, "change:dataKey", _.bind(graphView.keyChanged, graphView));
         },
         start: function(options) {
             this.setupLayout();
