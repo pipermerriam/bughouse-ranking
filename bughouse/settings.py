@@ -212,6 +212,8 @@ ELO_RATING_ENGINES = (
     'bughouse.ratings.engines.overall.OverallPlayerRatingsAsWhite',
     'bughouse.ratings.engines.overall.OverallPlayerRatingsAsBlack',
     'bughouse.ratings.engines.overall.OverallTeamRatings',
+    # Experimental
+    'bughouse.ratings.engines.batman.BatmanRatings',
 )
 
 # ELO constants
@@ -222,8 +224,8 @@ ELO_LOSE_TEAM = - ELO_WIN_TEAM
 ELO_WIN_SELF = 55 / ELO_K
 ELO_WIN_PARTNER = 45 / ELO_K
 
-ELO_LOSE_SELF = - ELO_WIN_SELF
-ELO_LOSE_PARTNER = -ELO_WIN_PARTNER
+ELO_LOSE_SELF = (-1) * ELO_WIN_SELF
+ELO_LOSE_PARTNER = (-1) * ELO_WIN_PARTNER
 
 ELO_PARTNER_WEIGHT = 1.0 / 5
 ELO_SELF_WEIGHT = 1 - ELO_PARTNER_WEIGHT

@@ -112,6 +112,7 @@ class Game(Timestamped):
                                  blank=True, default=UNKNOWN)
 
 
+EXPERIMENTAL_BATMAN = 'experimental:batman'
 OVERALL_OVERALL = 'overall:overall'
 OVERALL_WHITE = 'overall:white'
 OVERALL_BLACK = 'overall:black'
