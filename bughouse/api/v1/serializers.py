@@ -10,6 +10,7 @@ from bughouse.models import (
     OVERALL_OVERALL,
     OVERALL_WHITE,
     OVERALL_BLACK,
+    EXPERIMENTAL_BATMAN,
     Player,
     Team,
     Game,
@@ -57,6 +58,8 @@ class PlayerSerializer(serializers.ModelSerializer):
     rating_black = LatestRatingField(key=OVERALL_BLACK)
     rating_overall = LatestRatingField(key=OVERALL_OVERALL)
 
+    rating_batman = LatestRatingField(key=EXPERIMENTAL_BATMAN)
+
     def validate(self, data):
         icon = data.get('icon')
         icon_filename = data.get('icon_filename')
@@ -93,6 +96,7 @@ class PlayerSerializer(serializers.ModelSerializer):
             'rating_overall',
             'rating_white',
             'rating_black',
+            'rating_batman',
         )
 
     def save(self, *args, **kwargs):
