@@ -11,6 +11,7 @@ def elo_chance_to_lose(player, other):
     return 1.0 / (1 + pow(10, (diff / 400.0)))
 
 
+<<<<<<< HEAD
 def get_delta_k(rating):
     """
     DeltaK = 32 where the players rating <= 2100.
@@ -25,7 +26,7 @@ def get_delta_k(rating):
         return 16
 
 
-def adjust_ratings(player, opponent, partner, opponent_partner, scalar=2):
+def adjust_rating(player, partner, opponent, opponent_partner, scalar=2):
     """
     Adjust a player's ELO rating based on his partner matchup.
     """
@@ -53,10 +54,10 @@ def compute_points(delta_k, outcome_probability, other=False):
 
 
 def compute_individual_ratings(winner, winner_partner, loser, loser_partner):
-    w1_adjusted = adjust_ratings(winner, loser, winner_partner, loser_partner)
-    w2_adjusted = adjust_ratings(winner_partner, loser_partner, winner, loser)
-    l1_adjusted = adjust_ratings(loser, winner, loser_partner, winner_partner)
-    l2_adjusted = adjust_ratings(loser_partner, winner_partner, loser, winner)
+    w1_adjusted = adjust_rating(winner, winner_partner, loser, loser_partner)
+    w2_adjusted = adjust_rating(winner_partner, winner, loser_partner, loser)
+    l1_adjusted = adjust_rating(loser, loser_partner, winner, winner_partner)
+    l2_adjusted = adjust_rating(loser_partner, loser, winner_partner, winner)
 
     w1_dk = get_delta_k(w1_adjusted)
     w2_dk = get_delta_k(w2_adjusted)
@@ -147,6 +148,9 @@ def rate_players(game):
 class BatmanRatings(BaseRatingsEngine):
     def compute_ratings(self, game):
         rate_players(game)
+
+    def adjust_rating(self, player, player_partner, opponent, opponent_partner):
+        return adjust_rating(player, player_partner, opponent, opponent_partner)
 
 
 #

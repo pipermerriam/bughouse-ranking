@@ -167,23 +167,27 @@ def points_from_probability(probability_to_win, victory_condition_constant):
     )
 
 
+def adjust_rating(player, player_partner, opponent, opponent_partner):
+    return weighted_rating(player_partner, player)
+
+
 def compute_individual_ratings(winner, winner_partner, loser, loser_partner):
-    w1_weighted = weighted_rating(winner_partner, winner)
-    w2_weighted = weighted_rating(winner, winner_partner)
-    l1_weighted = weighted_rating(loser_partner, loser)
-    l2_weighted = weighted_rating(loser, loser_partner)
+    w1_adjusted = adjust_rating(winner, winner_partner, loser, loser_partner)
+    w2_adjusted = adjust_rating(winner_partner, winner, loser_partner, loser)
+    l1_adjusted = adjust_rating(loser, loser_partner, winner, winner_partner)
+    l2_adjusted = adjust_rating(loser_partner, loser, winner_partner, winner)
 
     w1_points = points_from_probability(
-        win_probability_from_rating(l1_weighted, w1_weighted), settings.ELO_WIN_SELF,
+        win_probability_from_rating(l1_adjusted, w1_adjusted), settings.ELO_WIN_SELF,
     )
     w2_points = points_from_probability(
-        win_probability_from_rating(l2_weighted, w2_weighted), settings.ELO_WIN_PARTNER,
+        win_probability_from_rating(l2_adjusted, w2_adjusted), settings.ELO_WIN_PARTNER,
     )
     l1_points = points_from_probability(
-        1 - win_probability_from_rating(w1_weighted, l1_weighted), settings.ELO_LOSE_SELF,
+        1 - win_probability_from_rating(w1_adjusted, l1_adjusted), settings.ELO_LOSE_SELF,
     )
     l2_points = points_from_probability(
-        1 - win_probability_from_rating(w2_weighted, l2_weighted), settings.ELO_LOSE_PARTNER,
+        1 - win_probability_from_rating(w2_adjusted, l2_adjusted), settings.ELO_LOSE_PARTNER,
     )
 
     return w1_points, w2_points, l1_points, l2_points
@@ -202,15 +206,24 @@ class OverallPlayerRatings(BaseRatingsEngine):
     def compute_ratings(self, game):
         rate_players(game)
 
+    def adjust_rating(self, player, player_partner, opponent, opponent_partner):
+        return adjust_rating(player, player_partner, opponent, opponent_partner)
+
 
 class OverallPlayerRatingsAsWhite(BaseRatingsEngine):
     def compute_ratings(self, game):
         rate_players_as_color(game, color=WHITE)
 
+    def adjust_rating(self, player, player_partner, opponent, opponent_partner):
+        return adjust_rating(player, player_partner, opponent, opponent_partner)
+
 
 class OverallPlayerRatingsAsBlack(BaseRatingsEngine):
     def compute_ratings(self, game):
         rate_players_as_color(game, color=BLACK)
+
+    def adjust_rating(self, player, player_partner, opponent, opponent_partner):
+        return adjust_rating(player, player_partner, opponent, opponent_partner)
 
 
 class OverallTeamRatings(BaseRatingsEngine):
