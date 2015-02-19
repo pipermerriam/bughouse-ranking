@@ -1,33 +1,26 @@
-from django.conf import settings
-
 from bughouse.models import EXPERIMENTAL_BATMAN
-from bughouse.ratings.utils import round_it
+from bughouse.ratings.utils import (
+    round_it,
+    elo_chance_to_lose,
+)
 from bughouse.ratings.engines.base import BaseRatingsEngine
 
 
-def elo_chance_to_lose(player, other):
+def get_delta_k(rating):
     """
-    other_rank + 400 * (wins - losses)
-    ----------------------------------
-               games
-
-    new = old + C * (score - expected)
-
-    Probability = 1 / (1 + (10 ^ -((White Rating - Black Rating) / 400)))
-
-    Black Adjustment = Int (-1 * (White Adjustment * Black's DeltaK / White's DeltaK))
-
-    White Adjustment = Int (DeltaK * (Score - Probability) )
-
-    1-0, score = 1.
-    1/2-1/2, score = 0.5.
-    0-1, score = 0.
+    DeltaK = 32 where the players rating <= 2100.
+    DeltaK = 24 where the players rating > 2100 and < 2400.
+    DeltaK = 16 where the players rating > 2400.
     """
-    diff = player - other
-    return 1.0 / (1 + pow(10, (diff / 400.0)))
+    if rating <= 2100:
+        return 32
+    elif 2100 < rating <= 2400:
+        return 24
+    else:
+        return 16
 
 
-def adjust_ratings(player, opponent, partner, opponent_partner, scalar=3):
+def adjust_rating(player, partner, opponent, opponent_partner, scalar=2):
     """
     Adjust a player's ELO rating based on his partner matchup.
     """
@@ -36,37 +29,54 @@ def adjust_ratings(player, opponent, partner, opponent_partner, scalar=3):
         partner,
     ))
     partner_diff = partner - opponent_partner
-    diff = (player + partner_diff * partner_probability * scalar) - opponent
-    return round_it(opponent + diff)
+    adjusted_rating = player + (partner_diff * partner_probability * scalar)
+    return round_it(adjusted_rating)
 
 
-def points_from_probability(probability_to_win, victory_condition_constant):
+def compute_points(delta_k, outcome_probability, other=False):
+    """
+    - If the outcome was likely, then you receive fewer points.
+    - If the outcome was unlikely, then you receive more points.
+    """
+    if other:
+        scale = 0.9
+    else:
+        scale = 1
     return round_it(
-        (1 - probability_to_win) * victory_condition_constant
+        delta_k * (1 - outcome_probability) * scale
     )
 
 
 def compute_individual_ratings(winner, winner_partner, loser, loser_partner):
-    w1_adjusted = adjust_ratings(winner, loser, winner_partner, loser_partner)
-    w2_adjusted = adjust_ratings(winner_partner, loser_partner, winner, loser)
-    l1_adjusted = adjust_ratings(loser, winner, loser_partner, winner_partner)
-    l2_adjusted = adjust_ratings(loser_partner, winner_partner, loser, winner)
+    w1_adjusted = adjust_rating(winner, winner_partner, loser, loser_partner)
+    w2_adjusted = adjust_rating(winner_partner, winner, loser_partner, loser)
+    l1_adjusted = adjust_rating(loser, loser_partner, winner, winner_partner)
+    l2_adjusted = adjust_rating(loser_partner, loser, winner_partner, winner)
 
-    w1_prob = 1 - elo_chance_to_lose(w1_adjusted, l1_adjusted)
-    w2_prob = 1 - elo_chance_to_lose(w2_adjusted, l2_adjusted)
-    l1_prob = elo_chance_to_lose(l1_adjusted, w1_adjusted)
-    l2_prob = elo_chance_to_lose(l2_adjusted, w2_adjusted)
+    w1_dk = get_delta_k(w1_adjusted)
+    w2_dk = get_delta_k(w2_adjusted)
+    l1_dk = get_delta_k(l1_adjusted)
+    l2_dk = get_delta_k(l2_adjusted)
 
-    w1_points = points_from_probability(w1_prob, settings.ELO_WIN_SELF)
-    w2_points = points_from_probability(w2_prob, settings.ELO_WIN_PARTNER)
-    l1_points = points_from_probability(l1_prob, settings.ELO_LOSE_SELF)
-    l2_points = points_from_probability(l2_prob, settings.ELO_LOSE_PARTNER)
+    w1_outcome_prob = 1 - elo_chance_to_lose(w1_adjusted, l1_adjusted)
+    w2_outcome_prob = 1 - elo_chance_to_lose(w2_adjusted, l2_adjusted)
+    l1_outcome_prob = elo_chance_to_lose(l1_adjusted, w1_adjusted)
+    l2_outcome_prob = elo_chance_to_lose(l2_adjusted, w2_adjusted)
+
+    # if your chance to win is high and you win - small addition
+    # if your chance to win is low and you win - large deduction
+    w1_points = compute_points(w1_dk, w1_outcome_prob)
+    w2_points = compute_points(w2_dk, w2_outcome_prob, True)
+    # if your chance to lose was high and you lose - small deduction
+    # if your chance to lose was low and you lose - large addition
+    l1_points = -1 * compute_points(l1_dk, l1_outcome_prob)
+    l2_points = -1 * compute_points(l2_dk, l2_outcome_prob, True)
 
     # for debugger purposes.
-    bases = (winner, winner_partner, loser, loser_partner)
-    adjusted = (w1_adjusted, w2_adjusted, l1_adjusted, l2_adjusted)
-    probs = (w1_prob, w2_prob, l1_prob, l2_prob)
-    points = (w1_points, w2_points, l1_points, l2_points)
+    bases = (winner, winner_partner, loser, loser_partner)  # NOQA
+    adjusted = (w1_adjusted, w2_adjusted, l1_adjusted, l2_adjusted)  # NOQA
+    probs = (w1_outcome_prob, w2_outcome_prob, l1_outcome_prob, l2_outcome_prob)  # NOQA
+    points = (w1_points, w2_points, l1_points, l2_points)  # NOQA
 
     return w1_points, w2_points, l1_points, l2_points
 
@@ -130,8 +140,13 @@ def rate_players(game):
 
 
 class BatmanRatings(BaseRatingsEngine):
+    rating_key = EXPERIMENTAL_BATMAN
+
     def compute_ratings(self, game):
         rate_players(game)
+
+    def adjust_rating(self, player, player_partner, opponent, opponent_partner):
+        return adjust_rating(player, player_partner, opponent, opponent_partner)
 
 
 #
@@ -142,26 +157,35 @@ def pad(s):
 
 
 def report_it(a, b, c, d, e=False):
-    pa = int(chance_of_loss(a, b, c, d) * 100)
+    aa = round_it(adjust_rating(a, b, c, d))
+    ba = round_it(adjust_rating(b, a, d, c))
+    ca = round_it(adjust_rating(c, d, a, b))
+    da = round_it(adjust_rating(d, c, b, a))
+
+    pa = int(elo_chance_to_lose(aa, ba) * 100)
     pb = int(abs(100 - pa))
-    pd = int(chance_of_loss(d, c, b, a) * 100)
-    pc = int(abs(100 - pd))
+    pc = int(elo_chance_to_lose(ca, da) * 100)
+    pd = int(abs(100 - pc))
 
     ra = int(elo_chance_to_lose(a, b) * 100)
     rb = int(abs(100 - ra))
-    rd = int(elo_chance_to_lose(d, c) * 100)
-    rc = int(abs(100 - rd))
+    rc = int(elo_chance_to_lose(c, d) * 100)
+    rd = int(abs(100 - rc))
 
     print "-----------------------------------"
     print "| {pa}% ({ra}%)  |  {pc}% ({rc}%) |".format(
         pa=pad(pa), ra=pad(ra), pc=pad(pc), rc=pad(rc),
     )
     print "-----------------------------------"
-    print "|      {aa}      |      {cc}      |".format(aa=pad(a), cc=pad(c))
+    print "| {aa}  ({oa})   | {cc}  ({oc})   |".format(
+        aa=pad(aa), cc=pad(ca), oa=pad(a), oc=pad(c),
+    )
     print "-----------------------------------"
     print "|       vs       |       vs       |"
     print "-----------------------------------"
-    print "|      {bb}      |      {dd}      |".format(bb=pad(b), dd=pad(d))
+    print "| {bb}  ({ob})    | {dd}  ({od})  |".format(
+        bb=pad(ba), dd=pad(da), ob=pad(b), od=pad(d),
+    )
     print "-----------------------------------"
     print "| {pb}% ({rb}%)  |  {pd}% ({rd}%) |".format(
         pb=pad(pb), rb=pad(rb), pd=pad(pd), rd=pad(rd),

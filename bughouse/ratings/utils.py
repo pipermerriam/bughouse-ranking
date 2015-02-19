@@ -1,9 +1,16 @@
 import decimal
 
 
-def win_probability_from_rating(r1, r2):
-    diff = r1 - r2
-    return 1.0 / (pow(10, (diff / 400.0)) + 1.0)
+def elo_chance_to_lose(player, opponent):
+    """
+    Probability = 1 / (1 + (10 ^ -((White Rating - Black Rating) / 400)))
+    """
+    diff = player - opponent
+    return 1.0 / (1 + pow(10, (diff / 400.0)))
+
+
+def elo_chance_to_win(player, opponent):
+    return 1 - elo_chance_to_lose(player, opponent)
 
 
 def round_it(num):

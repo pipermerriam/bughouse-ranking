@@ -1,5 +1,3 @@
-import decimal
-
 from django.conf import settings
 
 from bughouse.ratings.engines.base import BaseRatingsEngine
@@ -12,7 +10,8 @@ from bughouse.models import (
     OVERALL_BLACK,
 )
 from bughouse.ratings.utils import (
-    win_probability_from_rating,
+    elo_chance_to_lose,
+    round_it,
 )
 
 
@@ -28,31 +27,17 @@ def rate_teams(game):
 
     wtp, ltp = compute_team_ratings(wtlr, ltlr)
 
-    new_wtr = wtlr + (wtp * provisional_modifier(wt))
+    new_wtr = wtlr + wtp
     wtr, _ = game.team_ratings.update_or_create(
         team=wt, key=OVERALL_OVERALL, defaults={'rating': new_wtr}
     )
 
-    new_ltr = ltlr + (ltp * provisional_modifier(lt))
+    new_ltr = ltlr + ltp
     ltr, _ = game.team_ratings.update_or_create(
         team=lt, key=OVERALL_OVERALL, defaults={'rating': new_ltr}
     )
 
     return wtr, ltr
-
-
-def provisional_modifier(player_or_team):
-    """
-    A multiplier applied to the first N games a player plays in an attempt to
-    move them more quickly to their appropriate rating.
-
-    # TODO: this should probably be removed at some point as it adds complexity
-    # that isn't necessary in the long term.
-    """
-    if player_or_team.total_games < settings.ELO_PROVISIONAL_GAME_LIMIT:
-        return settings.ELO_PROVISIONAL_GAME_MODIFIER
-    else:
-        return 1
 
 
 def compute_points_for_matchup(w_lr, wp_lr, l_lr, lp_lr):
@@ -93,19 +78,19 @@ def rate_players(game):
             wtb_lr, wtw_lr, ltw_lr, ltb_lr,
         )
 
-    new_wtwr = wtw_lr + (wtwp * provisional_modifier(wtw))
+    new_wtwr = wtw_lr + wtwp
     wtwr, _ = game.player_ratings.update_or_create(
         player=wtw, key=OVERALL_OVERALL, defaults={'rating': new_wtwr}
     )
-    new_wtbr = wtb_lr + (wtbp * provisional_modifier(wtb))
+    new_wtbr = wtb_lr + wtbp
     wtbr, _ = game.player_ratings.update_or_create(
         player=wtb, key=OVERALL_OVERALL, defaults={'rating': new_wtbr}
     )
-    new_ltwr = ltw_lr + (ltwp * provisional_modifier(ltw))
+    new_ltwr = ltw_lr + ltwp
     ltwr, _ = game.player_ratings.update_or_create(
         player=ltw, key=OVERALL_OVERALL, defaults={'rating': new_ltwr}
     )
-    new_ltbr = ltb_lr + (ltbp * provisional_modifier(ltb))
+    new_ltbr = ltb_lr + ltbp
     ltbr, _ = game.player_ratings.update_or_create(
         player=ltb, key=OVERALL_OVERALL, defaults={'rating': new_ltbr}
     )
@@ -140,21 +125,21 @@ def rate_players_as_color(game, color):
         )
 
     if color == WHITE:
-        new_wtwr = wtw_lr + (wtwp * provisional_modifier(wtw))
+        new_wtwr = wtw_lr + wtwp
         wtwr, _ = game.player_ratings.update_or_create(
             player=wtw, key=OVERALL_WHITE, defaults={'rating': new_wtwr}
         )
-        new_ltwr = ltw_lr + (ltwp * provisional_modifier(ltw))
+        new_ltwr = ltw_lr + ltwp
         ltwr, _ = game.player_ratings.update_or_create(
             player=ltw, key=OVERALL_WHITE, defaults={'rating': new_ltwr}
         )
         return wtwr, ltwr
     elif color == BLACK:
-        new_wtbr = wtb_lr + (wtbp * provisional_modifier(wtb))
+        new_wtbr = wtb_lr + wtbp
         wtbr, _ = game.player_ratings.update_or_create(
             player=wtb, key=OVERALL_BLACK, defaults={'rating': new_wtbr}
         )
-        new_ltbr = ltb_lr + (ltbp * provisional_modifier(ltb))
+        new_ltbr = ltb_lr + ltbp
         ltbr, _ = game.player_ratings.update_or_create(
             player=ltb, key=OVERALL_BLACK, defaults={'rating': new_ltbr}
         )
@@ -177,31 +162,32 @@ def weighted_rating(self_rating, partner_rating, self_weight=None, partner_weigh
 
 
 def points_from_probability(probability_to_win, victory_condition_constant):
-    return int(
-        decimal.Decimal((1 - probability_to_win) * victory_condition_constant).quantize(
-            decimal.Decimal('1'),
-            rounding=decimal.ROUND_HALF_EVEN,
-        )
+    return round_it(
+        (1 - probability_to_win) * victory_condition_constant
     )
+
+
+def adjust_rating(player, player_partner, opponent, opponent_partner):
+    return weighted_rating(player_partner, player)
 
 
 def compute_individual_ratings(winner, winner_partner, loser, loser_partner):
-    w1_weighted = weighted_rating(winner_partner, winner)
-    w2_weighted = weighted_rating(winner, winner_partner)
-    l1_weighted = weighted_rating(loser_partner, loser)
-    l2_weighted = weighted_rating(loser, loser_partner)
+    w1_adjusted = adjust_rating(winner, winner_partner, loser, loser_partner)
+    w2_adjusted = adjust_rating(winner_partner, winner, loser_partner, loser)
+    l1_adjusted = adjust_rating(loser, loser_partner, winner, winner_partner)
+    l2_adjusted = adjust_rating(loser_partner, loser, winner_partner, winner)
 
     w1_points = points_from_probability(
-        win_probability_from_rating(l1_weighted, w1_weighted), settings.ELO_WIN_SELF,
+        elo_chance_to_lose(l1_adjusted, w1_adjusted), settings.ELO_WIN_SELF,
     )
     w2_points = points_from_probability(
-        win_probability_from_rating(l2_weighted, w2_weighted), settings.ELO_WIN_PARTNER,
+        elo_chance_to_lose(l2_adjusted, w2_adjusted), settings.ELO_WIN_PARTNER,
     )
     l1_points = points_from_probability(
-        1 - win_probability_from_rating(w1_weighted, l1_weighted), settings.ELO_LOSE_SELF,
+        1 - elo_chance_to_lose(w1_adjusted, l1_adjusted), settings.ELO_LOSE_SELF,
     )
     l2_points = points_from_probability(
-        1 - win_probability_from_rating(w2_weighted, l2_weighted), settings.ELO_LOSE_PARTNER,
+        1 - elo_chance_to_lose(w2_adjusted, l2_adjusted), settings.ELO_LOSE_PARTNER,
     )
 
     return w1_points, w2_points, l1_points, l2_points
@@ -209,7 +195,7 @@ def compute_individual_ratings(winner, winner_partner, loser, loser_partner):
 
 def compute_team_ratings(r_winning_team, r_losing_team):
     w_points = points_from_probability(
-        win_probability_from_rating(r_winning_team, r_losing_team), settings.ELO_WIN_TEAM,
+        elo_chance_to_lose(r_winning_team, r_losing_team), settings.ELO_WIN_TEAM,
     )
     l_points = - w_points
 
@@ -217,18 +203,33 @@ def compute_team_ratings(r_winning_team, r_losing_team):
 
 
 class OverallPlayerRatings(BaseRatingsEngine):
+    rating_key = OVERALL_OVERALL
+
     def compute_ratings(self, game):
         rate_players(game)
 
+    def adjust_rating(self, player, player_partner, opponent, opponent_partner):
+        return adjust_rating(player, player_partner, opponent, opponent_partner)
+
 
 class OverallPlayerRatingsAsWhite(BaseRatingsEngine):
+    rating_key = OVERALL_WHITE
+
     def compute_ratings(self, game):
         rate_players_as_color(game, color=WHITE)
 
+    def adjust_rating(self, player, player_partner, opponent, opponent_partner):
+        return adjust_rating(player, player_partner, opponent, opponent_partner)
+
 
 class OverallPlayerRatingsAsBlack(BaseRatingsEngine):
+    rating_key = OVERALL_BLACK
+
     def compute_ratings(self, game):
         rate_players_as_color(game, color=BLACK)
+
+    def adjust_rating(self, player, player_partner, opponent, opponent_partner):
+        return adjust_rating(player, player_partner, opponent, opponent_partner)
 
 
 class OverallTeamRatings(BaseRatingsEngine):
