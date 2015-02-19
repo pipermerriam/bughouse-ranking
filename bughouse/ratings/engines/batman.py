@@ -73,10 +73,10 @@ def compute_individual_ratings(winner, winner_partner, loser, loser_partner):
     l2_points = -1 * compute_points(l2_dk, l2_outcome_prob, True)
 
     # for debugger purposes.
-    bases = (winner, winner_partner, loser, loser_partner)
-    adjusted = (w1_adjusted, w2_adjusted, l1_adjusted, l2_adjusted)
-    probs = (w1_outcome_prob, w2_outcome_prob, l1_outcome_prob, l2_outcome_prob)
-    points = (w1_points, w2_points, l1_points, l2_points)
+    bases = (winner, winner_partner, loser, loser_partner) # NOQA
+    adjusted = (w1_adjusted, w2_adjusted, l1_adjusted, l2_adjusted) # NOQA
+    probs = (w1_outcome_prob, w2_outcome_prob, l1_outcome_prob, l2_outcome_prob) # NOQA
+    points = (w1_points, w2_points, l1_points, l2_points) # NOQA
 
     return w1_points, w2_points, l1_points, l2_points
 
