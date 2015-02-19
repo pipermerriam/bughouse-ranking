@@ -1,5 +1,3 @@
-import decimal
-
 from django.conf import settings
 
 from bughouse.ratings.engines.base import BaseRatingsEngine
@@ -13,6 +11,7 @@ from bughouse.models import (
 )
 from bughouse.ratings.utils import (
     win_probability_from_rating,
+    round_it,
 )
 
 
@@ -28,31 +27,17 @@ def rate_teams(game):
 
     wtp, ltp = compute_team_ratings(wtlr, ltlr)
 
-    new_wtr = wtlr + (wtp * provisional_modifier(wt))
+    new_wtr = wtlr + wtp
     wtr, _ = game.team_ratings.update_or_create(
         team=wt, key=OVERALL_OVERALL, defaults={'rating': new_wtr}
     )
 
-    new_ltr = ltlr + (ltp * provisional_modifier(lt))
+    new_ltr = ltlr + ltp
     ltr, _ = game.team_ratings.update_or_create(
         team=lt, key=OVERALL_OVERALL, defaults={'rating': new_ltr}
     )
 
     return wtr, ltr
-
-
-def provisional_modifier(player_or_team):
-    """
-    A multiplier applied to the first N games a player plays in an attempt to
-    move them more quickly to their appropriate rating.
-
-    # TODO: this should probably be removed at some point as it adds complexity
-    # that isn't necessary in the long term.
-    """
-    if player_or_team.total_games < settings.ELO_PROVISIONAL_GAME_LIMIT:
-        return settings.ELO_PROVISIONAL_GAME_MODIFIER
-    else:
-        return 1
 
 
 def compute_points_for_matchup(w_lr, wp_lr, l_lr, lp_lr):
@@ -93,19 +78,19 @@ def rate_players(game):
             wtb_lr, wtw_lr, ltw_lr, ltb_lr,
         )
 
-    new_wtwr = wtw_lr + (wtwp * provisional_modifier(wtw))
+    new_wtwr = wtw_lr + wtwp
     wtwr, _ = game.player_ratings.update_or_create(
         player=wtw, key=OVERALL_OVERALL, defaults={'rating': new_wtwr}
     )
-    new_wtbr = wtb_lr + (wtbp * provisional_modifier(wtb))
+    new_wtbr = wtb_lr + wtbp
     wtbr, _ = game.player_ratings.update_or_create(
         player=wtb, key=OVERALL_OVERALL, defaults={'rating': new_wtbr}
     )
-    new_ltwr = ltw_lr + (ltwp * provisional_modifier(ltw))
+    new_ltwr = ltw_lr + ltwp
     ltwr, _ = game.player_ratings.update_or_create(
         player=ltw, key=OVERALL_OVERALL, defaults={'rating': new_ltwr}
     )
-    new_ltbr = ltb_lr + (ltbp * provisional_modifier(ltb))
+    new_ltbr = ltb_lr + ltbp
     ltbr, _ = game.player_ratings.update_or_create(
         player=ltb, key=OVERALL_OVERALL, defaults={'rating': new_ltbr}
     )
@@ -140,21 +125,21 @@ def rate_players_as_color(game, color):
         )
 
     if color == WHITE:
-        new_wtwr = wtw_lr + (wtwp * provisional_modifier(wtw))
+        new_wtwr = wtw_lr + wtwp
         wtwr, _ = game.player_ratings.update_or_create(
             player=wtw, key=OVERALL_WHITE, defaults={'rating': new_wtwr}
         )
-        new_ltwr = ltw_lr + (ltwp * provisional_modifier(ltw))
+        new_ltwr = ltw_lr + ltwp
         ltwr, _ = game.player_ratings.update_or_create(
             player=ltw, key=OVERALL_WHITE, defaults={'rating': new_ltwr}
         )
         return wtwr, ltwr
     elif color == BLACK:
-        new_wtbr = wtb_lr + (wtbp * provisional_modifier(wtb))
+        new_wtbr = wtb_lr + wtbp
         wtbr, _ = game.player_ratings.update_or_create(
             player=wtb, key=OVERALL_BLACK, defaults={'rating': new_wtbr}
         )
-        new_ltbr = ltb_lr + (ltbp * provisional_modifier(ltb))
+        new_ltbr = ltb_lr + ltbp
         ltbr, _ = game.player_ratings.update_or_create(
             player=ltb, key=OVERALL_BLACK, defaults={'rating': new_ltbr}
         )
@@ -177,11 +162,8 @@ def weighted_rating(self_rating, partner_rating, self_weight=None, partner_weigh
 
 
 def points_from_probability(probability_to_win, victory_condition_constant):
-    return int(
-        decimal.Decimal((1 - probability_to_win) * victory_condition_constant).quantize(
-            decimal.Decimal('1'),
-            rounding=decimal.ROUND_HALF_EVEN,
-        )
+    return round_it(
+        (1 - probability_to_win) * victory_condition_constant
     )
 
 

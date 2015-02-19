@@ -15,6 +15,6 @@ from bughouse.ratings.engines.batman import adjust_ratings
     ),
 )
 def test_adjusted_scores(base_ratings, expected):
-    actual = adjust_ratings(*base_ratings)
+    actual = adjust_ratings(*base_ratings, scalar=3)
 
     assert actual == expected

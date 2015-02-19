@@ -8,7 +8,6 @@ from bughouse.models import (
 from bughouse.ratings.engines.overall import (
     rate_teams,
     rate_players,
-    provisional_modifier,
 )
 
 
@@ -16,8 +15,8 @@ def test_rate_single_game(factories, models, elo_settings):
     game = factories.GameFactory()
     r1, r2 = rate_teams(game)
 
-    assert r1.rating == 1024
-    assert r2.rating == 976
+    assert r1.rating == 1006
+    assert r2.rating == 994
 
 
 def test_rate_multiple_games(factories, models):
@@ -26,39 +25,8 @@ def test_rate_multiple_games(factories, models):
     rate_teams(factories.GameFactory(winning_team=team_a, losing_team=team_b))
     rate_teams(factories.GameFactory(winning_team=team_a, losing_team=team_b))
 
-    assert team_a.get_latest_rating(OVERALL_OVERALL) == 1052
-    assert team_b.get_latest_rating(OVERALL_OVERALL) == 948
-
-
-def test_provisional_limit(factories, models):
-    team_a = factories.TeamFactory()
-    team_b = factories.TeamFactory()
-
-    assert provisional_modifier(team_a) == 4
-
-    rate_teams(factories.GameFactory(winning_team=team_a, losing_team=team_b))
-    rate_teams(factories.GameFactory(winning_team=team_a, losing_team=team_b))
-    rate_teams(factories.GameFactory(winning_team=team_a, losing_team=team_b))
-    rate_teams(factories.GameFactory(winning_team=team_a, losing_team=team_b))
-    rate_teams(factories.GameFactory(winning_team=team_a, losing_team=team_b))
-    rate_teams(factories.GameFactory(winning_team=team_a, losing_team=team_b))
-
-    assert provisional_modifier(team_a) == 4
-
-    rate_teams(factories.GameFactory(winning_team=team_a, losing_team=team_b))
-    rate_teams(factories.GameFactory(winning_team=team_a, losing_team=team_b))
-    rate_teams(factories.GameFactory(winning_team=team_a, losing_team=team_b))
-    rate_teams(factories.GameFactory(winning_team=team_a, losing_team=team_b))
-    rate_teams(factories.GameFactory(winning_team=team_a, losing_team=team_b))
-
-    assert team_a.total_games == 11
-    assert provisional_modifier(team_a) == 1
-    assert (
-        team_a.get_latest_rating(OVERALL_OVERALL) > team_b.get_latest_rating(OVERALL_OVERALL)
-    )
-    assert (
-        team_a.get_latest_rating(OVERALL_OVERALL) + team_b.get_latest_rating(OVERALL_OVERALL)
-    ) / 2 == 1000
+    assert team_a.get_latest_rating(OVERALL_OVERALL) == 1012
+    assert team_b.get_latest_rating(OVERALL_OVERALL) == 988
 
 
 @pytest.mark.parametrize(
@@ -71,18 +39,18 @@ def test_individual_ratings(factories, models, losing_color):
     if game.losing_color == game.BLACK:
         wtwr, wtbr, ltwr, ltbr = rate_players(game)
 
-        assert wtwr.player.get_latest_rating(OVERALL_OVERALL) == 1028
-        assert wtbr.player.get_latest_rating(OVERALL_OVERALL) == 1024
-        assert ltwr.player.get_latest_rating(OVERALL_OVERALL) == 976
-        assert ltbr.player.get_latest_rating(OVERALL_OVERALL) == 972
+        assert wtwr.player.get_latest_rating(OVERALL_OVERALL) == 1007
+        assert wtbr.player.get_latest_rating(OVERALL_OVERALL) == 1006
+        assert ltwr.player.get_latest_rating(OVERALL_OVERALL) == 994
+        assert ltbr.player.get_latest_rating(OVERALL_OVERALL) == 993
 
     else:
         wtwr, wtbr, ltwr, ltbr = rate_players(game)
 
-        assert wtwr.player.get_latest_rating(OVERALL_OVERALL) == 1024
-        assert wtbr.player.get_latest_rating(OVERALL_OVERALL) == 1028
-        assert ltwr.player.get_latest_rating(OVERALL_OVERALL) == 972
-        assert ltbr.player.get_latest_rating(OVERALL_OVERALL) == 976
+        assert wtwr.player.get_latest_rating(OVERALL_OVERALL) == 1006
+        assert wtbr.player.get_latest_rating(OVERALL_OVERALL) == 1007
+        assert ltwr.player.get_latest_rating(OVERALL_OVERALL) == 993
+        assert ltbr.player.get_latest_rating(OVERALL_OVERALL) == 994
 
 
 def test_ratings_computation_is_idempotent(factories, models):
