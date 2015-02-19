@@ -10,7 +10,7 @@ from bughouse.models import (
     OVERALL_BLACK,
 )
 from bughouse.ratings.utils import (
-    win_probability_from_rating,
+    elo_chance_to_lose,
     round_it,
 )
 
@@ -178,16 +178,16 @@ def compute_individual_ratings(winner, winner_partner, loser, loser_partner):
     l2_adjusted = adjust_rating(loser_partner, loser, winner_partner, winner)
 
     w1_points = points_from_probability(
-        win_probability_from_rating(l1_adjusted, w1_adjusted), settings.ELO_WIN_SELF,
+        elo_chance_to_lose(l1_adjusted, w1_adjusted), settings.ELO_WIN_SELF,
     )
     w2_points = points_from_probability(
-        win_probability_from_rating(l2_adjusted, w2_adjusted), settings.ELO_WIN_PARTNER,
+        elo_chance_to_lose(l2_adjusted, w2_adjusted), settings.ELO_WIN_PARTNER,
     )
     l1_points = points_from_probability(
-        1 - win_probability_from_rating(w1_adjusted, l1_adjusted), settings.ELO_LOSE_SELF,
+        1 - elo_chance_to_lose(w1_adjusted, l1_adjusted), settings.ELO_LOSE_SELF,
     )
     l2_points = points_from_probability(
-        1 - win_probability_from_rating(w2_adjusted, l2_adjusted), settings.ELO_LOSE_PARTNER,
+        1 - elo_chance_to_lose(w2_adjusted, l2_adjusted), settings.ELO_LOSE_PARTNER,
     )
 
     return w1_points, w2_points, l1_points, l2_points
@@ -195,7 +195,7 @@ def compute_individual_ratings(winner, winner_partner, loser, loser_partner):
 
 def compute_team_ratings(r_winning_team, r_losing_team):
     w_points = points_from_probability(
-        win_probability_from_rating(r_winning_team, r_losing_team), settings.ELO_WIN_TEAM,
+        elo_chance_to_lose(r_winning_team, r_losing_team), settings.ELO_WIN_TEAM,
     )
     l_points = - w_points
 
@@ -203,6 +203,8 @@ def compute_team_ratings(r_winning_team, r_losing_team):
 
 
 class OverallPlayerRatings(BaseRatingsEngine):
+    rating_key = OVERALL_OVERALL
+
     def compute_ratings(self, game):
         rate_players(game)
 
@@ -211,6 +213,8 @@ class OverallPlayerRatings(BaseRatingsEngine):
 
 
 class OverallPlayerRatingsAsWhite(BaseRatingsEngine):
+    rating_key = OVERALL_WHITE
+
     def compute_ratings(self, game):
         rate_players_as_color(game, color=WHITE)
 
@@ -219,6 +223,8 @@ class OverallPlayerRatingsAsWhite(BaseRatingsEngine):
 
 
 class OverallPlayerRatingsAsBlack(BaseRatingsEngine):
+    rating_key = OVERALL_BLACK
+
     def compute_ratings(self, game):
         rate_players_as_color(game, color=BLACK)
 

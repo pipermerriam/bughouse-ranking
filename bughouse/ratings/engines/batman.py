@@ -1,17 +1,11 @@
 from bughouse.models import EXPERIMENTAL_BATMAN
-from bughouse.ratings.utils import round_it
+from bughouse.ratings.utils import (
+    round_it,
+    elo_chance_to_lose,
+)
 from bughouse.ratings.engines.base import BaseRatingsEngine
 
 
-def elo_chance_to_lose(player, other):
-    """
-    Probability = 1 / (1 + (10 ^ -((White Rating - Black Rating) / 400)))
-    """
-    diff = player - other
-    return 1.0 / (1 + pow(10, (diff / 400.0)))
-
-
-<<<<<<< HEAD
 def get_delta_k(rating):
     """
     DeltaK = 32 where the players rating <= 2100.
@@ -146,6 +140,8 @@ def rate_players(game):
 
 
 class BatmanRatings(BaseRatingsEngine):
+    rating_key = EXPERIMENTAL_BATMAN
+
     def compute_ratings(self, game):
         rate_players(game)
 
