@@ -73,10 +73,10 @@ def compute_individual_ratings(winner, winner_partner, loser, loser_partner):
     l2_points = -1 * compute_points(l2_dk, l2_outcome_prob, True)
 
     # for debugger purposes.
-    bases = (winner, winner_partner, loser, loser_partner) # NOQA
-    adjusted = (w1_adjusted, w2_adjusted, l1_adjusted, l2_adjusted) # NOQA
-    probs = (w1_outcome_prob, w2_outcome_prob, l1_outcome_prob, l2_outcome_prob) # NOQA
-    points = (w1_points, w2_points, l1_points, l2_points) # NOQA
+    bases = (winner, winner_partner, loser, loser_partner)  # NOQA
+    adjusted = (w1_adjusted, w2_adjusted, l1_adjusted, l2_adjusted)  # NOQA
+    probs = (w1_outcome_prob, w2_outcome_prob, l1_outcome_prob, l2_outcome_prob)  # NOQA
+    points = (w1_points, w2_points, l1_points, l2_points)  # NOQA
 
     return w1_points, w2_points, l1_points, l2_points
 
@@ -157,10 +157,10 @@ def pad(s):
 
 
 def report_it(a, b, c, d, e=False):
-    aa = round_it(adjust_ratings(a, b, c, d))
-    ba = round_it(adjust_ratings(b, a, d, c))
-    ca = round_it(adjust_ratings(c, d, a, b))
-    da = round_it(adjust_ratings(d, c, b, a))
+    aa = round_it(adjust_rating(a, b, c, d))
+    ba = round_it(adjust_rating(b, a, d, c))
+    ca = round_it(adjust_rating(c, d, a, b))
+    da = round_it(adjust_rating(d, c, b, a))
 
     pa = int(elo_chance_to_lose(aa, ba) * 100)
     pb = int(abs(100 - pa))
@@ -177,11 +177,15 @@ def report_it(a, b, c, d, e=False):
         pa=pad(pa), ra=pad(ra), pc=pad(pc), rc=pad(rc),
     )
     print "-----------------------------------"
-    print "| {aa}  ({oa})   | {cc}  ({oc})   |".format(aa=pad(aa), cc=pad(ca), oa=pad(a), oc=pad(c))
+    print "| {aa}  ({oa})   | {cc}  ({oc})   |".format(
+        aa=pad(aa), cc=pad(ca), oa=pad(a), oc=pad(c),
+    )
     print "-----------------------------------"
     print "|       vs       |       vs       |"
     print "-----------------------------------"
-    print "| {bb}  ({ob})    | {dd}  ({od})  |".format(bb=pad(ba), dd=pad(da), ob=pad(b), od=pad(d))
+    print "| {bb}  ({ob})    | {dd}  ({od})  |".format(
+        bb=pad(ba), dd=pad(da), ob=pad(b), od=pad(d),
+    )
     print "-----------------------------------"
     print "| {pb}% ({rb}%)  |  {pd}% ({rd}%) |".format(
         pb=pad(pb), rb=pad(rb), pd=pad(pd), rd=pad(rd),
