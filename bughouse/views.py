@@ -40,6 +40,10 @@ class ReportGameView(PlayerDataMixin, generic.TemplateView):
         return serializer.data
 
 
+class RecordGameView(PlayerDataMixin, generic.TemplateView):
+    template_name = 'bughouse/record-game.html'
+
+
 class TeamLeaderboard(generic.ListView):
     model = Team
     context_object_name = 'teams'
